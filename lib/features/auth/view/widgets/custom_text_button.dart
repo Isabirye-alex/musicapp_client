@@ -11,7 +11,7 @@ class CustomTextButton extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onTap,
         child: Text(text, style: TextTheme.of(context).bodyLarge),
       ),
     );

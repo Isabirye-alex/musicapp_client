@@ -1,7 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
+import 'package:little_music/features/auth/model/user_model.dart';
+import 'package:little_music/features/auth/repositories/auth_remote_repositry.dart';
+import 'package:little_music/features/auth/view/pages/sign_up_page.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_button.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_field.dart';
+import 'package:fpdart/fpdart.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,17 +14,22 @@ class LoginPage extends StatefulWidget {
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
-
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  bool isObscureText = true;
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  void clearFields() {
+    emailController.clear();
+    passwordController.clear();
   }
 
   @override
@@ -49,19 +59,48 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 20),
               CustomTextField(
+                onTap: () {
+                  setState(() {
+                    isObscureText = !isObscureText;
+                  });
+                },
                 controller: passwordController,
                 hintText: 'Password',
                 prefixIcon: Icons.password_outlined,
                 suffixIcon: Icons.remove_red_eye_sharp,
+                isObscureText: isObscureText,
               ),
               SizedBox(height: 20),
-              CustomTextButton(onTap:(){} ,text: 'Log In'),
+              CustomTextButton(
+                onTap: () async {
+                  final user = UserModel(
+                    email: emailController.text.trim(),
+                    password: passwordController.text.trim(),
+                  );
+                 final res = await AuthRemoteRepository().signin(user);
+                 final response = switch(res){
+                  Right()=>clearFields(),
+                  Left(value : final l) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$l')))
+                 }
+                  
+                },
+                text: 'Log In',
+              ),
               RichText(
                 text: TextSpan(
                   text: 'Don\'t have an account? ',
                   style: TextTheme.of(context).bodyLarge,
                   children: [
                     TextSpan(
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SignUpPage(),
+                            ),
+                          );
+                        },
+
                       text: 'Sign up here',
                       style: TextStyle(
                         color: AColorTheme.gradient3,

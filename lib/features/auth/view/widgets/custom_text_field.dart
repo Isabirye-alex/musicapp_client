@@ -8,7 +8,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.onTap,
     required this.controller,
-    this.isObscureText = true,
+    this.isObscureText = false,
   });
 
   final String? hintText;
@@ -21,21 +21,17 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
-        suffixIcon: InkWell(onTap: onTap, child: Icon(suffixIcon)),
+        suffixIcon: suffixIcon != null
+    ? InkWell(onTap: onTap, child: Icon(suffixIcon))
+    : null,
         prefixIcon: Icon(prefixIcon),
       ),
       obscureText: isObscureText,
       obscuringCharacter: '*',
-      autofocus: true,
-      validator: (val) {
-        if (val!.trim().isEmpty) {
-          return '$hintText is missing';
-        } else {
-          return null;
-        }
-      },
+      autofocus: false,
     );
   }
 }
