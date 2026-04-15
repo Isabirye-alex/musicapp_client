@@ -2,4 +2,7 @@ class AppFailure {
   final String message;
 
   const AppFailure({this.message = 'Sorry unexpected error occurres'});
+
+  @override
+  String toString() => '''message: sign in error''';
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/theme/a_app_theme.dart';
 import 'package:little_music/features/auth/view/pages/sign_up_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: AAppTheme.lightTheme,
       darkTheme: AAppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      home:SignUpPage(),
+      home: SignUpPage(),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
@@ -6,15 +7,16 @@ import 'package:little_music/features/auth/repositories/auth_remote_repositry.da
 import 'package:little_music/features/auth/view/pages/login_page.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_button.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_field.dart';
+import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 
-class SignUpPage extends StatefulWidget {
+class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  ConsumerState<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends ConsumerState<SignUpPage> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -92,14 +94,14 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(height: 20),
               CustomTextButton(
                 onTap: () async {
-                  final user = UserModel(
-                    firstName: firstNameController.text.trim(),
-                    lastName: lastNameController.text.trim(),
-                    email: emailController.text.trim(),
-                    password: passwordController.text.trim(),
-                  );
-                  await AuthRemoteRepository().signup(user);
-                  clearFields();
+                  ref
+                      .read(authViewmodelProvider.notifier)
+                      .signup(
+                        firstNameController.text.trim(),
+                        lastNameController.text.trim(),
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
                 },
                 text: 'Sign Up',
               ),

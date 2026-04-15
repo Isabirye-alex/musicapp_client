@@ -21,12 +21,18 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      validator: (value) {
+        if (value!.trim().isEmpty) {
+          return '$hintText is missing';
+        }
+        return null;
+      },
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         suffixIcon: suffixIcon != null
-    ? InkWell(onTap: onTap, child: Icon(suffixIcon))
-    : null,
+            ? InkWell(onTap: onTap, child: Icon(suffixIcon))
+            : null,
         prefixIcon: Icon(prefixIcon),
       ),
       obscureText: isObscureText,

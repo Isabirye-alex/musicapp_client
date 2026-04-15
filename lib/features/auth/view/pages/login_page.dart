@@ -6,7 +6,7 @@ import 'package:little_music/features/auth/repositories/auth_remote_repositry.da
 import 'package:little_music/features/auth/view/pages/sign_up_page.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_button.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_field.dart';
-import 'package:fpdart/fpdart.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,6 +14,7 @@ class LoginPage extends StatefulWidget {
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -77,12 +78,19 @@ class _LoginPageState extends State<LoginPage> {
                     email: emailController.text.trim(),
                     password: passwordController.text.trim(),
                   );
-                 final res = await AuthRemoteRepository().signin(user);
-                 final response = switch(res){
-                  Right()=>clearFields(),
-                  Left(value : final l) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$l')))
-                 }
-                  
+                  final res = await AuthRemoteRepository().signin(user);
+                  switch (res) {
+                    case Right():
+                      clearFields();
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('Sucess')));
+
+                    case Left(value: final l):
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('$l')));
+                  }
                 },
                 text: 'Log In',
               ),

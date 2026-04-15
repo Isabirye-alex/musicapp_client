@@ -6,16 +6,21 @@ import 'package:little_music/core/failure/failure.dart';
 import 'package:little_music/features/auth/model/user_model.dart';
 
 class AuthRemoteRepository {
-  Future<Either<AppFailure, UserModel>> signup(UserModel user) async {
+  Future<Either<AppFailure, UserModel>> signup(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('${ServerConstants.serverurl}/api/v1/auth/signup'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "first_name": user.firstName,
-          "last_name": user.lastName,
-          "email": user.email,
-          "password_hash": user.password,
+          "first_name": firstName,
+          "last_name": lastName,
+          "email": email,
+          "password_hash": password,
         }),
       );
 
