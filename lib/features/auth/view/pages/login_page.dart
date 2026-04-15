@@ -1,21 +1,29 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
+import 'package:little_music/core/widgets/error.dart';
+import 'package:little_music/core/widgets/loader.dart';
+import 'package:little_music/core/widgets/success.dart';
 import 'package:little_music/features/auth/model/user_model.dart';
 import 'package:little_music/features/auth/repositories/auth_remote_repositry.dart';
 import 'package:little_music/features/auth/view/pages/sign_up_page.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_button.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_field.dart';
 import 'package:fpdart/fpdart.dart' hide State;
+import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
+import 'package:little_music/features/home/views/pages/home_page.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -35,93 +43,107 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(authViewmodelProvider)?.isLoading == true;
+    ref.listen(authViewmodelProvider, (_, next) {
+      next?.when(
+        data: (data) {
+          SuccessHelper.showSuccess(
+            context,
+            'Welcome \'${data.lastName}\'',
+            'Success',
+          );
+        },
+        error: (error, str) {
+          ErrorHelper.showError(context, '$error', 'SignIn Error');
+        },
+        loading: () {},
+      );
+    });
+
     return Scaffold(
       // appBar: AppBar(),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'We\'re happy to see you back,',
-                style: TextTheme.of(context).headlineLarge,
-              ),
-              Text(
-                'Log In To Your Account.',
-                style: TextTheme.of(context).headlineLarge,
-              ),
-              SizedBox(height: 20),
-              CustomTextField(
-                controller: emailController,
-                hintText: 'Email',
-                prefixIcon: Icons.email,
-              ),
-              SizedBox(height: 20),
-              CustomTextField(
-                onTap: () {
-                  setState(() {
-                    isObscureText = !isObscureText;
-                  });
-                },
-                controller: passwordController,
-                hintText: 'Password',
-                prefixIcon: Icons.password_outlined,
-                suffixIcon: Icons.remove_red_eye_sharp,
-                isObscureText: isObscureText,
-              ),
-              SizedBox(height: 20),
-              CustomTextButton(
-                onTap: () async {
-                  final user = UserModel(
-                    email: emailController.text.trim(),
-                    password: passwordController.text.trim(),
-                  );
-                  final res = await AuthRemoteRepository().signin(user);
-                  switch (res) {
-                    case Right():
-                      clearFields();
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('Sucess')));
-
-                    case Left(value: final l):
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('$l')));
-                  }
-                },
-                text: 'Log In',
-              ),
-              RichText(
-                text: TextSpan(
-                  text: 'Don\'t have an account? ',
-                  style: TextTheme.of(context).bodyLarge,
+      body: isLoading
+          ? Loader()
+          : Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextSpan(
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SignUpPage(),
-                            ),
+                    Text(
+                      'We\'re happy to see you back,',
+                      style: TextTheme.of(context).headlineLarge,
+                    ),
+                    Text(
+                      'Log In To Your Account.',
+                      style: TextTheme.of(context).headlineLarge,
+                    ),
+                    SizedBox(height: 20),
+                    CustomTextField(
+                      controller: emailController,
+                      hintText: 'Email',
+                      prefixIcon: Icons.email,
+                    ),
+                    SizedBox(height: 20),
+                    CustomTextField(
+                      onTap: () {
+                        setState(() {
+                          isObscureText = !isObscureText;
+                        });
+                      },
+                      controller: passwordController,
+                      hintText: 'Password',
+                      prefixIcon: Icons.password_outlined,
+                      suffixIcon: Icons.remove_red_eye_sharp,
+                      isObscureText: isObscureText,
+                    ),
+                    SizedBox(height: 20),
+                    CustomTextButton(
+                      onTap: () async {
+                        if (formKey.currentState!.validate()) {
+                          ref
+                              .read(authViewmodelProvider.notifier)
+                              .signin(
+                                emailController.text.trim(),
+                                passwordController.text.trim(),
+                              );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
                           );
-                        },
+                        }
+                      },
+                      text: 'Log In',
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        text: 'Don\'t have an account? ',
+                        style: TextTheme.of(context).bodyLarge,
+                        children: [
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => SignUpPage(),
+                                  ),
+                                );
+                              },
 
-                      text: 'Sign up here',
-                      style: TextStyle(
-                        color: AColorTheme.gradient3,
-                        fontSize: 18,
+                            text: 'Sign up here',
+                            style: TextStyle(
+                              color: AColorTheme.gradient3,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

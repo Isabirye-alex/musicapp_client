@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:little_music/core/constants/server_constants.dart';
@@ -24,9 +25,6 @@ class AuthRemoteRepository {
         }),
       );
 
-      print('STATUS: ${response.statusCode}');
-      print('BODY: ${response.body}');
-
       final result = jsonDecode(response.body);
 
       if (response.statusCode == 201) {
@@ -36,20 +34,21 @@ class AuthRemoteRepository {
         return Left(AppFailure(message: result['detail'] ?? 'Signup failed'));
       }
     } catch (e) {
-      return Left(AppFailure(message: e.toString()));
+      debugPrint('$e.toString()');
+      return Left(AppFailure());
     }
   }
 
-  Future<Either<AppFailure, UserModel>> signin(UserModel user) async {
+  Future<Either<AppFailure, UserModel>> signin(
+    String email,
+    String password,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('${ServerConstants.serverurl}/api/v1/auth/signin'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"email": user.email, "password_hash": user.password}),
+        body: jsonEncode({"email": email, "password_hash": password}),
       );
-
-      print('STATUS: ${response.statusCode}');
-      print('BODY: ${response.body}');
 
       final result = jsonDecode(response.body);
 
@@ -60,7 +59,8 @@ class AuthRemoteRepository {
         return Left(AppFailure(message: result['detail'] ?? 'Signin failed'));
       }
     } catch (e) {
-      return Left(AppFailure(message: e.toString()));
+      debugPrint('$e.toString()');
+      return Left(AppFailure());
     }
   }
 }
