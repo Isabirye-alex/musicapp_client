@@ -7,12 +7,9 @@ import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/core/widgets/error.dart';
 import 'package:little_music/core/widgets/loader.dart';
 import 'package:little_music/core/widgets/success.dart';
-import 'package:little_music/features/auth/model/user_model.dart';
-import 'package:little_music/features/auth/repositories/auth_remote_repositry.dart';
 import 'package:little_music/features/auth/view/pages/sign_up_page.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_button.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_field.dart';
-import 'package:fpdart/fpdart.dart' hide State;
 import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/home_page.dart';
 
@@ -43,7 +40,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(authViewmodelProvider)?.isLoading == true;
+    final isLoading = ref.watch(authViewmodelProvider.select((val)=>val?.isLoading==true));
     ref.listen(authViewmodelProvider, (_, next) {
       next?.when(
         data: (data) {
@@ -104,14 +101,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         if (formKey.currentState!.validate()) {
                           ref
                               .read(authViewmodelProvider.notifier)
-                              .signin(
+                              .signIn(
                                 emailController.text.trim(),
                                 passwordController.text.trim(),
                               );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
-                          );
                         }
                       },
                       text: 'Log In',

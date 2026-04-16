@@ -5,6 +5,7 @@ class UserModel {
   final String? lastName;
   final String? email;
   final String? password;
+  final String? accessToken;
 
   const UserModel({
     this.firstName,
@@ -12,6 +13,7 @@ class UserModel {
     this.email,
     this.password,
     this.userId,
+    this.accessToken
   });
 
   Map<String, dynamic> toJson() {
@@ -30,6 +32,7 @@ class UserModel {
       firstName: json['first_name'] ?? '',
       lastName: json['last_name'] ?? '',
       email: json['email'],
+      accessToken: json['access_token'] ?? ''
     );
   }
 }

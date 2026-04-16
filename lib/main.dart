@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/theme/a_app_theme.dart';
-import 'package:little_music/features/auth/view/pages/sign_up_page.dart';
+import 'package:little_music/features/auth/view/pages/login_page.dart';
+import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 
-void main() {
-  runApp(ProviderScope(child: const MyApp()));
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final container = ProviderContainer();
+  final userNotifier = container.read(authViewmodelProvider.notifier);
+  await userNotifier.initSharedPreferences();
+  final user = await userNotifier.getData();
+  print('Hello....................................');
+  print('User : $user');
+
+  runApp(
+      UncontrolledProviderScope(
+      container: container,
+      child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -13,12 +26,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'MusicApp',
       themeMode: ThemeMode.system,
       theme: AAppTheme.lightTheme,
       darkTheme: AAppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      home: SignUpPage(),
+      home: LoginPage(),
     );
   }
 }

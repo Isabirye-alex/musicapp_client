@@ -1,17 +1,24 @@
-// ignore_for_file: unused_local_variable
 
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:little_music/features/auth/model/user_model.dart';
-import 'package:little_music/features/auth/repositories/auth_remote_repositry.dart';
+import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
+import 'package:little_music/features/auth/repositories/auth_remote_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_viewmodel.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthViewmodel extends _$AuthViewmodel {
-  final AuthRemoteRepository _authRemoteRepository = AuthRemoteRepository();
+  late AuthRemoteRepository _authRemoteRepository;
+  late AuthLocalRepository _authLocalRepository;
   @override
   AsyncValue<UserModel>? build() {
+    _authRemoteRepository = ref.watch(authRemoteRepositoryProvider);
+    _authLocalRepository = ref.watch(authLocalRepositoryProvider);
     return null;
+  }
+
+  Future<void> initSharedPreferences()async{
+    await _authLocalRepository.init();
   }
 
   Future<void> signup(
@@ -34,24 +41,44 @@ class AuthViewmodel extends _$AuthViewmodel {
         StackTrace.current,
       ),
     };
-
   }
 
-   Future<void> signin(
-    String email,
-    String password,
-  ) async {
+  Future<void> signIn(String email, String password) async {
     state = AsyncValue.loading();
-    final res = await _authRemoteRepository.signin(
-      email,
-      password,
-    );
+    final res = await _authRemoteRepository.signin(email, password);
+
     final val = switch (res) {
-      Right(value: final r) => state = AsyncValue.data(r),
+      Right(value: final r) => state = _logInSuccess(r),
       Left(value: final l) => state = AsyncValue.error(
         l.message,
         StackTrace.current,
       ),
     };
+  }
+
+  Future<UserModel?> getData()async {
+    final token = _authLocalRepository.getToken();
+    print('Printing Token.................: $token');
+    if(token != null){
+      state = const AsyncLoading();
+      final response = await _authRemoteRepository.getCurrentUser(token);
+      final val = switch (response) {
+        Right(value: final r) => state = AsyncValue.data(r),
+        Left(value: final l) => state = AsyncValue.error(
+          l.message,
+          StackTrace.current,
+        ),
+      };
+
+      return val.value;
+
+    }
+    return null;
+
+  }
+
+  AsyncValue<UserModel>? _logInSuccess(UserModel user){
+    _authLocalRepository.setToken(user.accessToken);
+    return state = AsyncValue.data(user);
   }
 }

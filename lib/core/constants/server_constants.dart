@@ -1,4 +1,4 @@
 class ServerConstants {
   ServerConstants._();
-  static const serverurl = 'http://10.41.3.92:8000';
+  static const serverUrl = 'http://10.220.77.99:8000';
 }
