@@ -10,7 +10,8 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     this.isObscureText = false,
     this.readOnly = false,
-    this.songOnTap
+    this.songOnTap,
+    this.maxLines = 1
   });
 
   final String? hintText;
@@ -21,6 +22,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool isObscureText;
   final bool readOnly;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class CustomTextField extends StatelessWidget {
 
     return TextFormField(
       textAlign: TextAlign.start,
-      maxLines: 3,
+      maxLines: maxLines,
       onTap: songOnTap,
       readOnly: readOnly,
       validator: (value) {
