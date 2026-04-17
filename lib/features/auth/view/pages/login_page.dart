@@ -1,6 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
@@ -11,7 +9,7 @@ import 'package:little_music/features/auth/view/pages/sign_up_page.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_button.dart';
 import 'package:little_music/features/auth/view/widgets/custom_text_field.dart';
 import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
-import 'package:little_music/features/home/views/pages/home_page.dart';
+
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});

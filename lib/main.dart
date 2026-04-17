@@ -6,9 +6,6 @@ import 'package:little_music/features/auth/view/pages/login_page.dart';
 import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 import 'package:little_music/features/home/upload_song_page.dart';
 
-import 'features/home/views/pages/home_page.dart';
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final container = ProviderContainer();
