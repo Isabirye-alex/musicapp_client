@@ -4,7 +4,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
-import 'package:little_music/features/auth/view/widgets/custom_text_field.dart';
+import 'package:little_music/features/auth/view/widgets/audio_wave.dart';
+import 'package:little_music/utilis/custom_text_field.dart';
 
 import '../../utilis/utilis.dart';
 
@@ -67,12 +68,15 @@ class _UploadSongPageState extends State<UploadSongPage> {
       ],
       ),
       body: ListView(
+        scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(16),
         shrinkWrap: true,
         children: [
           GestureDetector(
             onTap: selectImage,
-            child:selectedImage != null ? Image.file(selectedImage!) : DottedBorder(
+            child:selectedImage != null ? ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+                child: Image.file(selectedImage!, height: 150,width: 50,fit: BoxFit.cover,)) : DottedBorder(
               ignoring: true,
                options: RectDottedBorderOptions(
                  dashPattern: [10,10],
@@ -100,9 +104,10 @@ class _UploadSongPageState extends State<UploadSongPage> {
             ),
           ),
           SizedBox(height: 20,),
+          selectedAudio != null ? AudioWave(path: selectedAudio!.path) :
           CustomTextField(
             readOnly: true,
-            songOnTap: (){},
+            songOnTap: selectAudio,
             controller: null,
             hintText: 'Pick a song',
           ),

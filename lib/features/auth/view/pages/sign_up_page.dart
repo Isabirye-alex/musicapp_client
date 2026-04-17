@@ -2,13 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
-import 'package:little_music/core/widgets/error.dart';
-import 'package:little_music/core/widgets/loader.dart';
-import 'package:little_music/core/widgets/success.dart';
+import 'package:little_music/utilis/error.dart';
+import 'package:little_music/utilis/loader.dart';
 import 'package:little_music/features/auth/view/pages/login_page.dart';
-import 'package:little_music/features/auth/view/widgets/custom_text_button.dart';
-import 'package:little_music/features/auth/view/widgets/custom_text_field.dart';
+import 'package:little_music/utilis/custom_text_field.dart';
 import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
+
+import '../../../../utilis/custom_text_button.dart';
+import '../../../../utilis/success.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});

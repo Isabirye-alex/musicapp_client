@@ -32,7 +32,9 @@ class MyApp extends ConsumerWidget {
       theme: AAppTheme.lightTheme,
       darkTheme: AAppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      home: currentUser !=null ? UploadSongPage() : LoginPage(),
+      home:UploadSongPage(),
     );
   }
 }
+
+//  currentUser !=null ? UploadSongPage() : LoginPage()
