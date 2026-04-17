@@ -46,7 +46,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         data: (data) {
           SuccessHelper.showSuccess(
             context,
-            'Welcome \'${data.lastName}\'',
+            'Welcome \'${data!.user.lastName}\'',
             'Success',
           );
         },

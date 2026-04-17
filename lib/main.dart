@@ -11,8 +11,6 @@ void main() async {
   final userNotifier = container.read(authViewmodelProvider.notifier);
   await userNotifier.initSharedPreferences();
   final user = await userNotifier.getData();
-  print('Hello....................................');
-  print('User : $user');
 
   runApp(
       UncontrolledProviderScope(

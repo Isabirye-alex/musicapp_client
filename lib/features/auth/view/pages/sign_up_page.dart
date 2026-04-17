@@ -44,13 +44,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(authViewmodelProvider)?.isLoading == true;
+    final isLoading = ref.watch(authViewmodelProvider.select((val)=>val?.isLoading==true));
     ref.listen(authViewmodelProvider, (_, next) {
       next?.when(
         data: (data) {
           SuccessHelper.showSuccess(
             context,
-            'User \'${data.lastName}\' Registered Successfully',
+            'User Registered Successfully',
             'Success',
           );
         },

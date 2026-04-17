@@ -1,38 +1,54 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class UserModel {
-  final String? userId;
-  final String? firstName;
-  final String? lastName;
-  final String? email;
-  final String? password;
-  final String? accessToken;
+  User user;
+  String accessToken;
 
-  const UserModel({
-    this.firstName,
-    this.lastName,
-    this.email,
-    this.password,
-    this.userId,
-    this.accessToken
-  });
+  UserModel({required this.user, required this.accessToken});
 
-  Map<String, dynamic> toJson() {
-    return {
-      'userId': userId,
-      'first_name': firstName,
-      'last_name': lastName,
-      'email': email,
-      'password_hash': password,
-    };
-  }
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+    user: User.fromJson(json["user"]),
+    accessToken: json["access_token"],
+  );
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  Map<String, dynamic> toJson() => {
+    "user": user.toJson(),
+    "access_token": accessToken,
+  };
+
+  UserModel copyWith({
+    User? user,
+    String? accessToken,
+  }) {
     return UserModel(
-      userId: json['id'] ?? '',
-      firstName: json['first_name'] ?? '',
-      lastName: json['last_name'] ?? '',
-      email: json['email'],
-      accessToken: json['access_token'] ?? ''
+      user: user ?? this.user,
+      accessToken: accessToken ?? this.accessToken,
     );
   }
+}
+
+class User {
+  String id;
+  String firstName;
+  String lastName;
+  String email;
+
+  User({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json["id"] ?? '',
+    firstName: json["first_name"] ?? '',
+    lastName: json["last_name"] ?? '',
+    email: json["email"] ?? '',
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "first_name": firstName,
+    "last_name": lastName,
+    "email": email,
+  };
 }

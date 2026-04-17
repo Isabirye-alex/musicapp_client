@@ -1,5 +1,6 @@
 
 import 'package:fpdart/fpdart.dart' hide State;
+import 'package:little_music/core/current_user_notifier.dart';
 import 'package:little_music/features/auth/model/user_model.dart';
 import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
 import 'package:little_music/features/auth/repositories/auth_remote_repository.dart';
@@ -10,10 +11,13 @@ part 'auth_viewmodel.g.dart';
 class AuthViewmodel extends _$AuthViewmodel {
   late AuthRemoteRepository _authRemoteRepository;
   late AuthLocalRepository _authLocalRepository;
+  late CurrentUserNotifier _currentUserNotifier;
+
   @override
-  AsyncValue<UserModel>? build() {
+  AsyncValue<UserModel?>? build() {
     _authRemoteRepository = ref.watch(authRemoteRepositoryProvider);
     _authLocalRepository = ref.watch(authLocalRepositoryProvider);
+    _currentUserNotifier = ref.watch(currentUserProvider.notifier);
     return null;
   }
 
@@ -34,18 +38,17 @@ class AuthViewmodel extends _$AuthViewmodel {
       email,
       password,
     );
-    final val = switch (res) {
-      Right(value: final r) => state = AsyncValue.data(r),
-      Left(value: final l) => state = AsyncValue.error(
-        l.message,
-        StackTrace.current,
-      ),
-    };
+    switch (res) {
+      case Right():
+        state = const AsyncValue.data(null); //
+      case Left(value: final l):
+        state = AsyncValue.error(l.message, StackTrace.current);
+    }
   }
 
   Future<void> signIn(String email, String password) async {
     state = AsyncValue.loading();
-    final res = await _authRemoteRepository.signin(email, password);
+    final res = await _authRemoteRepository.signIn(email, password);
 
     final val = switch (res) {
       Right(value: final r) => state = _logInSuccess(r),
@@ -63,7 +66,7 @@ class AuthViewmodel extends _$AuthViewmodel {
       state = const AsyncLoading();
       final response = await _authRemoteRepository.getCurrentUser(token);
       final val = switch (response) {
-        Right(value: final r) => state = AsyncValue.data(r),
+        Right(value: final r) => _getDataSuccess(r),
         Left(value: final l) => state = AsyncValue.error(
           l.message,
           StackTrace.current,
@@ -76,9 +79,15 @@ class AuthViewmodel extends _$AuthViewmodel {
     return null;
 
   }
+  
+  AsyncValue<UserModel?> _getDataSuccess(UserModel user){
+    _currentUserNotifier.addUser(user);
+    return state = AsyncValue.data(user);
+  }
 
-  AsyncValue<UserModel>? _logInSuccess(UserModel user){
+  AsyncValue<UserModel?>? _logInSuccess(UserModel user){
     _authLocalRepository.setToken(user.accessToken);
+    _currentUserNotifier.addUser(user);
     return state = AsyncValue.data(user);
   }
 }
