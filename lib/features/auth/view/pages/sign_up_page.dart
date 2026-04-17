@@ -136,10 +136,11 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.of(context).push(
+                                Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                     builder: (context) => LoginPage(),
                                   ),
+                                    (_)=>false
                                 );
                               },
                             text: 'Log in here',

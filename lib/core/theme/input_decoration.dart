@@ -6,20 +6,22 @@ class LInputDecoration {
 
   static InputDecorationTheme lightTheme = InputDecorationTheme(
     contentPadding: EdgeInsets.all(12),
+
     focusColor: AColorTheme.secondary,
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: AColorTheme.gradient1, width: 4),
+      borderSide: BorderSide(width: 2),
       borderRadius: BorderRadius.circular(16),
     ),
   );
 
   static InputDecorationTheme darkTheme = InputDecorationTheme(
+
     contentPadding: EdgeInsets.all(12),
     focusColor: AColorTheme.secondary,
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: AColorTheme.gradient1, width: 4),
+      borderSide: BorderSide( width: 2),
       borderRadius: BorderRadius.circular(16),
     ),
   );
