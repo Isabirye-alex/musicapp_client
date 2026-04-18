@@ -61,7 +61,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
       homeViewmodelProvider.select((val) => val.isLoading == true),
     );
     ref.listen(homeViewmodelProvider, (_, data) {
-      data?.when(
+      data.when(
         data: (data) {
           SuccessHelper.showSuccess(
             context,

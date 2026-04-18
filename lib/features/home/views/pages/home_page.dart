@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/features/home/views/pages/library_page.dart';
+import 'package:little_music/features/home/views/pages/music_slab.dart';
 import 'package:little_music/features/home/views/pages/upload_song_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -37,7 +38,12 @@ class _HomePageState extends ConsumerState<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Sign Up'),
         ],
       ),
-      body: pages[selectedIndex],
+      body: Stack(
+        children: [
+          pages[selectedIndex],
+          Positioned(bottom: 0, right: 16, left: 16, child: MusicSlab()),
+        ],
+      ),
     );
   }
 }

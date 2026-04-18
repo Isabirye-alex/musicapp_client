@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
 import 'package:little_music/features/home/models/song_model.dart';
+import 'package:little_music/features/home/repositories/home_local_repository.dart';
 import 'package:little_music/features/home/repositories/home_remote_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'home_viewmodel.g.dart';
@@ -25,6 +26,7 @@ class HomeViewmodel extends _$HomeViewmodel {
   late HomeRemoteRepository _homeRemoteRepository;
   // ignore: unused_field
   late AuthLocalRepository _authLocalRepository;
+  late HomeLocalRepository _homeLocalRepository;
 
   @override
   AsyncValue<List<SongModel>> build() {
@@ -58,18 +60,7 @@ class HomeViewmodel extends _$HomeViewmodel {
     }
   }
 
-  // Future<void> getUserSongs() async {
-  //   final token = _authLocalRepository.getToken();
-  //   state = AsyncLoading();
-  //   final response = await _homeRemoteRepository.fetchAllUserSongs(token!);
-
-  //   final val = switch (response) {
-  //     Right(value: final List<SongModel> r) => state = AsyncValue.data(r),
-
-  //     Left(value: final l) => state = AsyncValue.error(
-  //       l.message,
-  //       StackTrace.current,
-  //     ),
-  //   };
-  // }
+  List<SongModel> getRecentlyPlayeSongs() {
+    return _homeLocalRepository.loadSongs();
+  }
 }

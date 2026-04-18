@@ -10,12 +10,11 @@ class LibraryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoading = ref.watch(
-      homeViewmodelProvider.select((val) => val.isLoading == true),
-    );
-
+    final recentlyPlayedSongs = ref
+        .watch(homeViewmodelProvider.notifier)
+        .getRecentlyPlayeSongs();
     ref.listen(homeViewmodelProvider, (_, data) {
-      data?.when(
+      data.when(
         data: (data) {
           SuccessHelper.showSuccess(
             context,
@@ -40,6 +39,20 @@ class LibraryPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Latest Today', style: TextTheme.of(context).headlineLarge),
+            GridView.builder(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                childAspectRatio: 3,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              itemCount: recentlyPlayedSongs.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  height: 180,
+                );
+              },
+            ),
             SizedBox(height: 20),
             ref
                 .watch(getAllSongsProvider)

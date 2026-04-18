@@ -31,7 +31,7 @@ android {
 
     defaultConfig {
         applicationId = "littletech.com.little_music"
-        minSdk = flutter.minSdkVersion
+        minSdkVersion(24)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

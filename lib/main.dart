@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:little_music/core/theme/a_app_theme.dart';
 import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/home_page.dart';
-import 'package:little_music/features/home/views/pages/library_page.dart';
-import 'package:little_music/features/home/views/pages/upload_song_page.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final dir = await getApplicationDocumentsDirectory();
+  Hive.init(dir.path);
   final container = ProviderContainer();
   final userNotifier = container.read(authViewmodelProvider.notifier);
   await userNotifier.initSharedPreferences();

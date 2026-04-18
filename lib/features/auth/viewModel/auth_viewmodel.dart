@@ -50,6 +50,7 @@ class AuthViewmodel extends _$AuthViewmodel {
     state = AsyncValue.loading();
     final res = await _authRemoteRepository.signIn(email, password);
 
+    // ignore: unused_local_variable
     final val = switch (res) {
       Right(value: final r) => state = _logInSuccess(r),
       Left(value: final l) => state = AsyncValue.error(
