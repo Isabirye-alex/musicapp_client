@@ -23,6 +23,7 @@ Future<List<SongModel>> getAllSongs(Ref ref) async {
 @riverpod
 class HomeViewmodel extends _$HomeViewmodel {
   late HomeRemoteRepository _homeRemoteRepository;
+  // ignore: unused_field
   late AuthLocalRepository _authLocalRepository;
 
   @override

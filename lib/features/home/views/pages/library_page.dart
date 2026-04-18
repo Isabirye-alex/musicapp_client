@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/utilis/success.dart';
@@ -52,52 +53,60 @@ class LibraryPage extends ConsumerWidget {
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           final song = data[index];
-                          return Padding(
-                            padding: EdgeInsets.all(4),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  height: 180,
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    image: DecorationImage(
-                                      image: NetworkImage(song.thumbnail),
-                                      fit: BoxFit.cover,
+                          return GestureDetector(
+                            onTap: () {
+                              ref
+                                  .read(currentSongProvider.notifier)
+                                  .updateSong(song);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    height: 180,
+                                    width: 180,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      image: DecorationImage(
+                                        image: NetworkImage(song.thumbnail),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 5),
-                                SizedBox(
-                                  width: 180,
-                                  child: Text(
-                                    song.songName,
-                                    style: TextTheme.of(context).bodyMedium!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: AColorTheme.inactiveSeekColor,
-                                        ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                                  SizedBox(height: 5),
+                                  SizedBox(
+                                    width: 180,
+                                    child: Text(
+                                      song.songName,
+                                      style: TextTheme.of(context).bodyMedium!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                AColorTheme.inactiveSeekColor,
+                                          ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 5),
-                                SizedBox(
-                                  width: 180,
-                                  child: Text(
-                                    'Artist: ${song.artistName}',
-                                    style: TextTheme.of(context).bodyMedium!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: AColorTheme.subtitleText,
-                                        ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                                  SizedBox(height: 5),
+                                  SizedBox(
+                                    width: 180,
+                                    child: Text(
+                                      'Artist: ${song.artistName}',
+                                      style: TextTheme.of(context).bodyMedium!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: AColorTheme.subtitleText,
+                                          ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         },

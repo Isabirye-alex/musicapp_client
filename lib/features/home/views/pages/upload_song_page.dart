@@ -58,7 +58,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(
-      homeViewmodelProvider.select((val) => val?.isLoading == true),
+      homeViewmodelProvider.select((val) => val.isLoading == true),
     );
     ref.listen(homeViewmodelProvider, (_, data) {
       data?.when(
@@ -66,8 +66,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
           SuccessHelper.showSuccess(
             context,
             'Song uploaded successfully',
-            'Success'
-                '',
+            'Success',
           );
         },
         error: (error, str) {
@@ -95,7 +94,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                               selectedImage!,
                               songNameController.text.trim(),
                               artistNameController.text.trim(),
-                              'FFFFFF'
+                              'FFFFFF',
                             );
                       },
                 icon: Icon(Icons.check),

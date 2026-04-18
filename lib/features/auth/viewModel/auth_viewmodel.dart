@@ -1,6 +1,6 @@
 
 import 'package:fpdart/fpdart.dart' hide State;
-import 'package:little_music/core/current_user_notifier.dart';
+import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/features/auth/model/user_model.dart';
 import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
 import 'package:little_music/features/auth/repositories/auth_remote_repository.dart';
