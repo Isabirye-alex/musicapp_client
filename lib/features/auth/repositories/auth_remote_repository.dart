@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:little_music/core/constants/server_constants.dart';
 import 'package:little_music/core/failure/failure.dart';
 import 'package:little_music/features/auth/model/user_model.dart';
-import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_remote_repository.g.dart';
 

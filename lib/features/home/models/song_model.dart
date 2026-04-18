@@ -18,30 +18,29 @@ class SongModel {
     required this.userId,
   });
 
-  
-
-  factory SongModel.fromJson(Map<String, dynamic> json) {
-    return SongModel(
-      song: json['song'],
-      thumbnail: json['thumbnail'],
-      artistName: json['artistName'],
-      songName: json['songName'],
-      hexCode: json['hexCode'],
-      songId: json['songId'],
-      userId: json['userId'],
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
-      'song': song,
-      'thumbnail': thumbnail,
-      'artistName': artistName,
-      'songName': songName,
-      'hexCode': hexCode,
-      'songId': songId,
-      'userId': userId,
+      'song_url': song,
+      'thumbnail_url': thumbnail,
+      'artist_name': artistName,
+      'song_name': songName,
+      'hex_node': hexCode,
+      'song_id': songId,
+      'user_id': userId,
     };
+  }
+
+  factory SongModel.fromJson(Map<String, dynamic> json) {
+    return SongModel(
+      song: json['song_url'] ?? '',
+      thumbnail: json['thumbnail_url'] ?? '',
+      artistName: json['artist_name'] ?? '',
+      songName: json['song_name'] ?? '',
+      hexCode: json['hex_code'] ?? '',
+      songId: json['song_id'] ?? '',
+      userId: json['user_id'] ?? '',
+    );
   }
 
   SongModel copyWith({
@@ -63,4 +62,6 @@ class SongModel {
       userId: userId ?? this.userId,
     );
   }
+
+
 }

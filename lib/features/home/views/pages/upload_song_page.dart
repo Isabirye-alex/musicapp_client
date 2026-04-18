@@ -12,7 +12,7 @@ import 'package:little_music/utilis/error.dart';
 import 'package:little_music/utilis/loader.dart';
 import 'package:little_music/utilis/success.dart';
 
-import '../../utilis/utilis.dart';
+import '../../../../utilis/utilis.dart';
 
 class UploadSongPage extends ConsumerStatefulWidget {
   const UploadSongPage({super.key});
@@ -71,7 +71,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
           );
         },
         error: (error, str) {
-          ErrorHelper.showError(context, '$error', 'SignUp Error');
+          ErrorHelper.showError(context, '$error', 'Upload Error');
         },
         loading: () {},
       );
@@ -84,9 +84,22 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(onPressed:isLoading ? null : () {
-                  ref.read(homeViewmodelProvider.notifier).upload(selectedAudio!.path, selectedImage!.path, songNameController.text.trim(), artistNameController.text.trim(), hexCode)
-              }, icon: Icon(Icons.check)),
+              IconButton(
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        ref
+                            .read(homeViewmodelProvider.notifier)
+                            .upload(
+                              selectedAudio!,
+                              selectedImage!,
+                              songNameController.text.trim(),
+                              artistNameController.text.trim(),
+                              'FFFFFF'
+                            );
+                      },
+                icon: Icon(Icons.check),
+              ),
               Text('Save', style: TextTheme.of(context).bodySmall),
             ],
           ),
