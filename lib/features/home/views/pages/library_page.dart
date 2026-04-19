@@ -40,6 +40,7 @@ class LibraryPage extends ConsumerWidget {
           children: [
             Text('Latest Today', style: TextTheme.of(context).headlineLarge),
             GridView.builder(
+              shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200,
                 childAspectRatio: 3,
@@ -48,9 +49,7 @@ class LibraryPage extends ConsumerWidget {
               ),
               itemCount: recentlyPlayedSongs.length,
               itemBuilder: (context, index) {
-                return SizedBox(
-                  height: 180,
-                );
+                return SizedBox(height: 180);
               },
             ),
             SizedBox(height: 20),

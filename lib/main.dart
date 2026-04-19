@@ -10,6 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dir = await getApplicationDocumentsDirectory();
   Hive.init(dir.path);
+  await Hive.openBox('songs_box');
   final container = ProviderContainer();
   final userNotifier = container.read(authViewmodelProvider.notifier);
   await userNotifier.initSharedPreferences();

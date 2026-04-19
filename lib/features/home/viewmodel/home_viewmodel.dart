@@ -32,6 +32,7 @@ class HomeViewmodel extends _$HomeViewmodel {
   AsyncValue<List<SongModel>> build() {
     _homeRemoteRepository = ref.watch(homeRemoteRepositoryProvider);
     _authLocalRepository = ref.watch(authLocalRepositoryProvider);
+    _homeLocalRepository = ref.watch(homeLocalRepositoryProvider);
     return AsyncValue.data([]);
   }
 
