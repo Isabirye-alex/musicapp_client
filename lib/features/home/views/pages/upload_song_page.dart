@@ -70,7 +70,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
           );
         },
         error: (error, str) {
-          ErrorHelper.showError(context, '$error', 'Upload Error');
+          ErrorHelper.showError(context, '$error', error.toString());
         },
         loading: () {},
       );
@@ -94,7 +94,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                               selectedImage!,
                               songNameController.text.trim(),
                               artistNameController.text.trim(),
-                              'FFFFFF',
+                              'FFFFEE',
                             );
                       },
                 icon: Icon(Icons.check),

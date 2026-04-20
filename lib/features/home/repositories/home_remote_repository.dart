@@ -50,6 +50,7 @@ class HomeRemoteRepository {
         );
       }
     } catch (e) {
+      print(e.toString());
       return Left(AppFailure(message: e.toString()));
     }
   }
@@ -67,7 +68,9 @@ class HomeRemoteRepository {
         final result = jsonDecode(response.body);
 
         final List<SongModel> res = result
-            .map<SongModel>((s) => SongModel.fromJson(s as Map<String, dynamic>)) 
+            .map<SongModel>(
+              (s) => SongModel.fromJson(s as Map<String, dynamic>),
+            )
             .toList();
         return Right(res);
       } else {
