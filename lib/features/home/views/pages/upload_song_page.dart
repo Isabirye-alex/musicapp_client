@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/auth/view/widgets/audio_wave.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
+import 'package:little_music/features/home/views/widgets/login_prompt.dart';
 import 'package:little_music/utilis/custom_text_field.dart';
 import 'package:little_music/utilis/error.dart';
 import 'package:little_music/utilis/loader.dart';
@@ -32,7 +33,6 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
     final image = await pickImage();
     if (image != null) {
       setState(() {
-        // ✅ triggers rebuild
         selectedImage = image;
       });
     }
@@ -40,7 +40,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
 
   void selectAudio() async {
     final audio =
-        await pickAudio(); // ✅ also fix: was calling pickImage() for audio
+        await pickAudio(); //
     if (audio != null) {
       setState(() {
         selectedAudio = audio;
@@ -55,11 +55,13 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
+    final currentUser = ref.watch(currentUserProvider);
     final isLoading = ref.watch(
       homeViewmodelProvider.select((val) => val.isLoading == true),
     );
+
     ref.listen(homeViewmodelProvider, (_, data) {
       data.when(
         data: (data) {
@@ -75,6 +77,15 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
         loading: () {},
       );
     });
+
+    //if user is not logged in — prompt to login
+    if (currentUser == null) {
+      return Scaffold(
+        body: LoginPrompt(),
+      );
+    }
+
+    // ✅ logged in — show upload page
     return Scaffold(
       appBar: AppBar(
         title: Text('Upload Song', style: TextTheme.of(context).headlineLarge),
@@ -87,6 +98,14 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                 onPressed: isLoading
                     ? null
                     : () {
+                        if (selectedAudio == null || selectedImage == null) {
+                          ErrorHelper.showError(
+                            context,
+                            'Please select both a song and thumbnail',
+                            'Missing Fields',
+                          );
+                          return;
+                        }
                         ref
                             .read(homeViewmodelProvider.notifier)
                             .upload(
@@ -97,7 +116,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                               'FFFFEE',
                             );
                       },
-                icon: Icon(Icons.check),
+                icon: const Icon(Icons.check),
               ),
               Text('Save', style: TextTheme.of(context).bodySmall),
             ],
@@ -105,11 +124,9 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
         ],
       ),
       body: isLoading
-          ? Loader()
+          ? const Loader()
           : ListView(
-              scrollDirection: Axis.vertical,
-              padding: EdgeInsets.all(16),
-              shrinkWrap: true,
+              padding: const EdgeInsets.all(16),
               children: [
                 GestureDetector(
                   onTap: selectImage,
@@ -119,7 +136,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                           child: Image.file(
                             selectedImage!,
                             height: 150,
-                            width: 50,
+                            width: double.infinity,
                             fit: BoxFit.cover,
                           ),
                         )
@@ -128,31 +145,26 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                           options: RectDottedBorderOptions(
                             dashPattern: [10, 10],
                             color: AColorTheme.gradient3,
-                            padding: EdgeInsets.all(4),
+                            padding: const EdgeInsets.all(4),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 150,
-                                width: double.infinity,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.folder_open, size: 40),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'Select Thumbnail for your song',
-                                      style: TextTheme.of(context).bodyLarge,
-                                    ),
-                                  ],
+                          child: SizedBox(
+                            height: 150,
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.folder_open, size: 40),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Select Thumbnail for your song',
+                                  style: TextTheme.of(context).bodyLarge,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 selectedAudio != null
                     ? AudioWave(path: selectedAudio!.path)
                     : CustomTextField(
@@ -161,19 +173,19 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                         controller: null,
                         hintText: 'Pick a song',
                       ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 CustomTextField(
                   controller: artistNameController,
                   hintText: 'Artist name',
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 CustomTextField(
                   controller: songNameController,
                   hintText: 'Song name',
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ColorPicker(
-                  pickersEnabled: {ColorPickerType.wheel: true},
+                  pickersEnabled: const {ColorPickerType.wheel: true},
                   color: selectedColor,
                   onColorChanged: (Color color) {},
                 ),
@@ -182,3 +194,4 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
     );
   }
 }
+

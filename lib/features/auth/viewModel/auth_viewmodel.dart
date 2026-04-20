@@ -1,4 +1,3 @@
-
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/features/auth/model/user_model.dart';
@@ -21,29 +20,40 @@ class AuthViewmodel extends _$AuthViewmodel {
     return null;
   }
 
-  Future<void> initSharedPreferences()async{
+  Future<void> initSharedPreferences() async {
     await _authLocalRepository.init();
   }
 
-  Future<void> signup(
+  Future<String?> signup(
     String firstName,
     String lastName,
     String email,
     String password,
   ) async {
-    state = AsyncValue.loading();
+    state = const AsyncValue.loading();
+
     final res = await _authRemoteRepository.signup(
       firstName,
       lastName,
       email,
       password,
     );
-    switch (res) {
-      case Right():
-        state = const AsyncValue.data(null); //
-      case Left(value: final l):
-        state = AsyncValue.error(l.message, StackTrace.current);
+
+    if (res is Right) {
+      final successMessage = (res as Right).value;
+
+      state = AsyncValue.data(successMessage);
+      return successMessage;
     }
+
+    if (res is Left) {
+      final failure = (res as Left).value;
+
+      state = AsyncValue.error(failure.message, StackTrace.current);
+      return null;
+    }
+
+    return null;
   }
 
   Future<void> signIn(String email, String password) async {
@@ -60,9 +70,9 @@ class AuthViewmodel extends _$AuthViewmodel {
     };
   }
 
-  Future<UserModel?> getData()async {
+  Future<UserModel?> getData() async {
     final token = _authLocalRepository.getToken();
-    if(token != null){
+    if (token != null) {
       state = const AsyncLoading();
       final response = await _authRemoteRepository.getCurrentUser(token);
       final val = switch (response) {
@@ -74,18 +84,16 @@ class AuthViewmodel extends _$AuthViewmodel {
       };
 
       return val.value;
-
     }
     return null;
-
   }
-  
-  AsyncValue<UserModel?> _getDataSuccess(UserModel user){
+
+  AsyncValue<UserModel?> _getDataSuccess(UserModel user) {
     _currentUserNotifier.addUser(user);
     return state = AsyncValue.data(user);
   }
 
-  AsyncValue<UserModel?>? _logInSuccess(UserModel user){
+  AsyncValue<UserModel?>? _logInSuccess(UserModel user) {
     _authLocalRepository.setToken(user.accessToken);
     _currentUserNotifier.addUser(user);
     return state = AsyncValue.data(user);

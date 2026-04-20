@@ -15,11 +15,14 @@ class HomeLocalRepository {
     box.put(song.songId, song.toJson());
   }
 
-  List<SongModel> loadSongs() {
+    List<SongModel> loadSongs() {
     List<SongModel> songs = [];
 
     for (final k in box.keys) {
-      songs.add(SongModel.fromJson(box.get(k)));
+      final value = box.get(k);
+      
+      final Map<String, dynamic> songMap = Map<String, dynamic>.from(value);
+      songs.add(SongModel.fromJson(songMap));
     }
     return songs;
   }

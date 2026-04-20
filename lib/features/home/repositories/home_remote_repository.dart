@@ -50,7 +50,6 @@ class HomeRemoteRepository {
         );
       }
     } catch (e) {
-      print(e.toString());
       return Left(AppFailure(message: e.toString()));
     }
   }
@@ -59,14 +58,18 @@ class HomeRemoteRepository {
     String token,
   ) async {
     try {
+      final url = '${ServerConstants.serverUrl}/api/v1/songs/list';
+      
+
       final response = await http.get(
-        Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/list'),
+        Uri.parse(url),
         headers: {'Content-Type': 'application/json', 'x-auth-token': token},
       );
 
+      
+
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-
         final List<SongModel> res = result
             .map<SongModel>(
               (s) => SongModel.fromJson(s as Map<String, dynamic>),
@@ -80,7 +83,32 @@ class HomeRemoteRepository {
         );
       }
     } catch (e) {
+    
       return Left(AppFailure(message: e.toString()));
     }
   }
-}
+
+ Future<Either<AppFailure, List<SongModel>>> fetchAllPlatformSongs() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/all'),
+        headers: {'Content-Type': 'application/json'}, // ✅ no token
+      );
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+        final List<SongModel> res = result
+            .map<SongModel>(
+              (s) => SongModel.fromJson(s as Map<String, dynamic>),
+            )
+            .toList();
+        return Right(res);
+      } else {
+        final result = jsonDecode(response.body);
+        return Left(
+          AppFailure(message: result['detail'] ?? 'Error fetching songs'),
+        );
+      }
+    } catch (e) {
+      return Left(AppFailure(message: e.toString()));
+    }
+  } }

@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/features/home/views/pages/library_page.dart';
 import 'package:little_music/features/home/views/pages/local_songs_page.dart';
 import 'package:little_music/features/home/views/pages/music_slab.dart';
+import 'package:little_music/features/home/views/pages/profile_page.dart';
 import 'package:little_music/features/home/views/pages/upload_song_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -18,37 +20,44 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       LibraryPage(),
-      UploadSongPage(),
       LocalSongsPage(),
+      UploadSongPage(),
+      ProfilePage(),
     ];
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         elevation: 70,
         type: BottomNavigationBarType.fixed,
-
         currentIndex: selectedIndex,
-        onTap: (value) {
-          setState(() {
-            selectedIndex = value;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance),
-            label: 'UpLoad Song',
-          ),
+        onTap: (value) => setState(() => selectedIndex = value),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Library'),
           BottomNavigationBarItem(
             icon: Icon(Icons.phone_android),
             label: 'Local Songs',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance),
+            label: 'Upload Song',
+          ),
+
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.profile_circled),
+            label: 'Profile',
+          ),
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          pages[selectedIndex],
-          Positioned(bottom: 0, right: 16, left: 16, child: MusicSlab()),
+          // page takes all available space
+          Expanded(child: pages[selectedIndex]),
+
+          //slab always pinned at bottom above nav bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: MusicSlab(),
+          ),
         ],
       ),
     );

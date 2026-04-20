@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
+import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:little_music/utilis/error.dart';
 import 'package:little_music/utilis/loader.dart';
 import 'package:little_music/features/auth/view/pages/sign_up_page.dart';
@@ -10,7 +11,6 @@ import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 
 import '../../../../utilis/custom_text_button.dart';
 import '../../../../utilis/success.dart';
-
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -39,7 +39,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(authViewmodelProvider.select((val)=>val?.isLoading==true));
+    final isLoading = ref.watch(
+      authViewmodelProvider.select((val) => val?.isLoading == true),
+    );
     ref.listen(authViewmodelProvider, (_, next) {
       next?.when(
         data: (data) {
@@ -47,6 +49,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             context,
             'Welcome \'${data!.user.lastName}\'',
             'Success',
+          );
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+            (_) => false,
           );
         },
         error: (error, str) {
@@ -77,14 +84,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     SizedBox(height: 20),
                     CustomTextField(
-
                       controller: emailController,
                       hintText: 'Email',
                       prefixIcon: Icons.email,
                     ),
                     SizedBox(height: 20),
                     CustomTextField(
-
                       onTap: () {
                         setState(() {
                           isObscureText = !isObscureText;
@@ -122,7 +127,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   MaterialPageRoute(
                                     builder: (context) => SignUpPage(),
                                   ),
-                                    (_)=>false
+                                  (_) => false,
                                 );
                               },
 

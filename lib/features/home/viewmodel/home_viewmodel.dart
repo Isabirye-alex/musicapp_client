@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
 import 'package:little_music/features/home/models/song_model.dart';
@@ -11,9 +10,25 @@ part 'home_viewmodel.g.dart';
 @riverpod
 Future<List<SongModel>> getAllSongs(Ref ref) async {
   final token = ref.watch(authLocalRepositoryProvider).getToken();
+  if (token == null) {
+    return [];
+  }
   final res = await ref
       .watch(homeRemoteRepositoryProvider)
-      .fetchAllUserSongs(token!);
+      .fetchAllUserSongs(token);
+  final val = switch (res) {
+    Right(value: final r) => r,
+    Left(value: final l) => throw l.message,
+  };
+  return val;
+}
+
+@riverpod
+Future<List<SongModel>> getAllPlatformSongs(Ref ref) async {
+  final res = await ref
+      .watch(homeRemoteRepositoryProvider)
+      .fetchAllPlatformSongs(); 
+
   final val = switch (res) {
     Right(value: final r) => r,
     Left(value: final l) => throw l.message,
@@ -44,6 +59,7 @@ class HomeViewmodel extends _$HomeViewmodel {
     String hexCode,
   ) async {
     final token = ref.watch(authLocalRepositoryProvider).getToken();
+    if (token == null) return;
     state = AsyncValue.loading();
     final res = await _homeRemoteRepository.uploadSong(
       song,
@@ -51,7 +67,7 @@ class HomeViewmodel extends _$HomeViewmodel {
       songName,
       artistName,
       hexCode,
-      token!,
+      token,
     );
     switch (res) {
       case Right():
@@ -64,4 +80,6 @@ class HomeViewmodel extends _$HomeViewmodel {
   List<SongModel> getRecentlyPlayeSongs() {
     return _homeLocalRepository.loadSongs();
   }
+
+  
 }

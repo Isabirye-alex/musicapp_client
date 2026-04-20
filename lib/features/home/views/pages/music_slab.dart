@@ -42,7 +42,6 @@ class MusicSlab extends ConsumerWidget {
       child: Stack(
         children: [
           Container(
-            height: 66,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: hexToColor(currentSong.hexCode),

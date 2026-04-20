@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
-import 'package:little_music/utilis/success.dart';
+import 'package:little_music/features/home/views/widgets/reusable_song_card.dart';
+import 'package:little_music/utilis/loader.dart';
 
 class LibraryPage extends ConsumerWidget {
   const LibraryPage({super.key});
@@ -13,124 +14,167 @@ class LibraryPage extends ConsumerWidget {
     final recentlyPlayedSongs = ref
         .watch(homeViewmodelProvider.notifier)
         .getRecentlyPlayeSongs();
-    ref.listen(homeViewmodelProvider, (_, data) {
-      data.when(
-        data: (data) {
-          SuccessHelper.showSuccess(
-            context,
-            'Songs Fetched Successfully',
-            'Success',
-          );
-        },
-        error: (error, str) {
-          SuccessHelper.showSuccess(
-            context,
-            'Error Fetching songs',
-            'Song Fetch Error',
-          );
-        },
-        loading: () {},
-      );
-    });
+
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: 20,
+        ),
+        child: ListView(
           children: [
-            Text('Latest Today', style: TextTheme.of(context).headlineLarge),
-            GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
+            //Recently Played
+            if (recentlyPlayedSongs.isNotEmpty) ...[
+              Text(
+                'Recently Played',
+                style: TextTheme.of(context).headlineMedium,
               ),
-              itemCount: recentlyPlayedSongs.length,
-              itemBuilder: (context, index) {
-                return SizedBox(height: 180);
-              },
-            ),
-            SizedBox(height: 20),
+              const SizedBox(height: 12),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 150,
+                  mainAxisExtent: 150,
+                  childAspectRatio: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                ),
+                itemCount: recentlyPlayedSongs.length,
+                itemBuilder: (context, index) {
+                  final song = recentlyPlayedSongs[index];
+                  return GestureDetector(
+                    onTap: () =>
+                        ref.read(currentSongProvider.notifier).updateSong(song),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: NetworkImage(song.thumbnail),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.black.withAlpha(120),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          song.songName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+            ],
+
+            //Your Uploads
+            Text('Your Uploads', style: TextTheme.of(context).headlineMedium),
+            const SizedBox(height: 12),
             ref
                 .watch(getAllSongsProvider)
                 .when(
                   data: (data) {
+                    if (data.isEmpty) {
+                      return Container(
+                        height: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: AColorTheme.gradient1.withAlpha(20),
+                        ),
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.upload, size: 36, color: Colors.grey),
+                              SizedBox(height: 8),
+                              Text(
+                                'You haven\'t uploaded any songs yet',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
                     return SizedBox(
-                      height: 260,
+                      height: 240,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: data.length,
-                        shrinkWrap: true,
                         itemBuilder: (context, index) {
                           final song = data[index];
-                          return GestureDetector(
-                            onTap: () {
-                              ref
-                                  .read(currentSongProvider.notifier)
-                                  .updateSong(song);
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.all(4),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    height: 180,
-                                    width: 180,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      image: DecorationImage(
-                                        image: NetworkImage(song.thumbnail),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  SizedBox(
-                                    width: 180,
-                                    child: Text(
-                                      song.songName,
-                                      style: TextTheme.of(context).bodyMedium!
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color:
-                                                AColorTheme.inactiveSeekColor,
-                                          ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  SizedBox(
-                                    width: 180,
-                                    child: Text(
-                                      'Artist: ${song.artistName}',
-                                      style: TextTheme.of(context).bodyMedium!
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: AColorTheme.subtitleText,
-                                          ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
+                          return SongCard(song: song, ref: ref);
                         },
                       ),
                     );
                   },
-                  error: (error, str) {
-                    return Center(child: Text('Error: ${error.toString()}'));
+                  error: (e, _) => Text(
+                    'Error loading your songs',
+                    style: TextStyle(color: Colors.red[300]),
+                  ),
+                  loading: () => const Loader(),
+                ),
+
+            const SizedBox(height: 24),
+
+            //Discover — All Platform Songs
+            Text('Discover', style: TextTheme.of(context).headlineMedium),
+            const SizedBox(height: 12),
+            ref
+                .watch(getAllPlatformSongsProvider)
+                .when(
+                  data: (data) {
+                    if (data.isEmpty) {
+                      return Container(
+                        height: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: AColorTheme.gradient1.withAlpha(20),
+                        ),
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.explore, size: 36, color: Colors.grey),
+                              SizedBox(height: 8),
+                              Text(
+                                'No songs from other users yet',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    return SizedBox(
+                      height: 240,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          final song = data[index];
+                          return SongCard(song: song, ref: ref);
+                        },
+                      ),
+                    );
                   },
-                  loading: () {
-                    return Text('Loading');
-                  },
+                  error: (e, _) => Text(
+                    'Error loading discover songs',
+                    style: TextStyle(color: Colors.red[300]),
+                  ),
+                  loading: () => const Loader(),
                 ),
           ],
         ),

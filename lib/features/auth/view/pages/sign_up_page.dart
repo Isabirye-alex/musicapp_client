@@ -45,15 +45,25 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(authViewmodelProvider.select((val)=>val?.isLoading==true));
+    final isLoading = ref.watch(
+      authViewmodelProvider.select((val) => val?.isLoading == true),
+    );
     ref.listen(authViewmodelProvider, (_, next) {
       next?.when(
         data: (data) {
-          SuccessHelper.showSuccess(
-            context,
-            'User Registered Successfully',
-            'Success',
-          );
+          if (data == null) {
+            //null means signup success (no user returned yet)
+            SuccessHelper.showSuccess(
+              context,
+              'User Registered Successfully',
+              'Success',
+            );
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+              (_) => false,
+            );
+          }
         },
         error: (error, str) {
           ErrorHelper.showError(context, '$error', 'SignUp Error');
@@ -141,7 +151,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                   MaterialPageRoute(
                                     builder: (context) => LoginPage(),
                                   ),
-                                    (_)=>false
+                                  (_) => false,
                                 );
                               },
                             text: 'Log in here',

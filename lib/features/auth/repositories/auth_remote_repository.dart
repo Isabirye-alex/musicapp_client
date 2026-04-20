@@ -14,11 +14,12 @@ AuthRemoteRepository authRemoteRepository(Ref ref) {
 }
 
 class AuthRemoteRepository {
-
-  Future<Either<AppFailure, void>> signup(String firstName,
-      String lastName,
-      String email,
-      String password,) async {
+  Future<Either<AppFailure, String>> signup(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('${ServerConstants.serverUrl}/api/v1/auth/signup'),
@@ -34,17 +35,19 @@ class AuthRemoteRepository {
       final result = jsonDecode(response.body);
 
       if (response.statusCode == 201) {
-        return Right(null);
+        return Right(result['message']);
       } else {
         return Left(AppFailure(message: result['detail'] ?? 'Signup failed'));
       }
     } catch (e) {
-      return Left(AppFailure());
+      return Left(AppFailure(message: e.toString()));
     }
   }
 
-  Future<Either<AppFailure, UserModel>> signIn(String email,
-      String password,) async {
+  Future<Either<AppFailure, UserModel>> signIn(
+    String email,
+    String password,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('${ServerConstants.serverUrl}/api/v1/auth/signin'),
@@ -86,7 +89,8 @@ class AuthRemoteRepository {
         return Right(user);
       } else {
         return Left(
-            AppFailure(message: result['detail'] ?? 'Failed to get user'));
+          AppFailure(message: result['detail'] ?? 'Failed to get user'),
+        );
       }
     } catch (e) {
       debugPrint('$e');
