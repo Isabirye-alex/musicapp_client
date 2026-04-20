@@ -1,8 +1,5 @@
-// lib/features/local_songs/repositories/local_songs_repository.dart
-
+import 'package:file_picker/file_picker.dart';
 import 'package:little_music/features/home/models/local_song_model.dart';
-import 'package:on_audio_query/on_audio_query.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'local_songs_repository.g.dart';
 
@@ -12,27 +9,24 @@ LocalSongsRepository localSongsRepository(Ref ref) {
 }
 
 class LocalSongsRepository {
-  final OnAudioQuery _audioQuery = OnAudioQuery();
-
-  Future<List<LocalSongModel>> fetchDeviceSongs() async {
-    final status = await Permission.audio.request();
-    if (!status.isGranted) return [];
-
-    final songs = await _audioQuery.querySongs(
-      sortType: SongSortType.TITLE,
-      orderType: OrderType.ASC_OR_SMALLER,
-      uriType: UriType.EXTERNAL,
+  Future<List<LocalSongModel>> pickSongs() async {
+    final result = await FilePicker.pickFiles(
+      // ✅ no .platform
+      type: FileType.audio,
+      allowMultiple: true,
     );
 
-    return songs
-        .where((s) => s.isMusic ?? false)
+    if (result == null) return [];
+
+    return result.files
+        .where((f) => f.path != null)
         .map(
-          (s) => LocalSongModel(
-            id: s.id.toString(),
-            title: s.title,
-            artist: s.artist ?? 'Unknown Artist',
-            path: s.data,
-            duration: s.duration ?? 0,
+          (f) => LocalSongModel(
+            id: f.identifier ?? f.name,
+            title: f.name.replaceAll(RegExp(r'\.[^.]+$'), ''),
+            artist: 'Unknown Artist',
+            path: f.path!,
+            duration: 0,
           ),
         )
         .toList();

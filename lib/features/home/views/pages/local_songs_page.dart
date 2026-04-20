@@ -4,8 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/local_song_notifier.dart';
-import 'package:on_audio_query/on_audio_query.dart';
-
 
 class LocalSongsPage extends ConsumerWidget {
   const LocalSongsPage({super.key});
@@ -17,6 +15,11 @@ class LocalSongsPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Device Music')),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: notifier.pickAndAddSongs,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Songs'),
+      ),
       body: songsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
@@ -25,9 +28,9 @@ class LocalSongsPage extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.music_off, size: 64, color: Colors.grey),
+                    Icon(Icons.music_note, size: 64, color: Colors.grey),
                     SizedBox(height: 16),
-                    Text('No music found on device'),
+                    Text('Tap + to add songs from your device'),
                   ],
                 ),
               )
@@ -38,13 +41,8 @@ class LocalSongsPage extends ConsumerWidget {
                   final isCurrent = notifier.currentSong?.id == song.id;
 
                   return ListTile(
-                    // artwork query
-                    leading: QueryArtworkWidget(
-                      id: int.parse(song.id),
-                      type: ArtworkType.AUDIO,
-                      nullArtworkWidget: const CircleAvatar(
-                        child: Icon(Icons.music_note),
-                      ),
+                    leading: CircleAvatar(
+                      child: Text(song.title[0].toUpperCase()),
                     ),
                     title: Text(
                       song.title,
@@ -53,13 +51,34 @@ class LocalSongsPage extends ConsumerWidget {
                     ),
                     subtitle: Text(song.artist),
                     trailing: isCurrent
-                        ? IconButton(
-                            icon: Icon(
-                              notifier.isPlaying
-                                  ? CupertinoIcons.pause
-                                  : CupertinoIcons.play_arrow_solid,
-                            ),
-                            onPressed: notifier.playAndPause,
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(
+                                  CupertinoIcons.backward_end_fill,
+                                ),
+                                onPressed: notifier.hasPrevious
+                                    ? notifier.previousSong
+                                    : null,
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  notifier.isPlaying
+                                      ? CupertinoIcons.pause
+                                      : CupertinoIcons.play_arrow_solid,
+                                ),
+                                onPressed: notifier.playAndPause,
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  CupertinoIcons.forward_end_fill,
+                                ),
+                                onPressed: notifier.hasNext
+                                    ? notifier.nextSong
+                                    : null,
+                              ),
+                            ],
                           )
                         : null,
                     onTap: () => notifier.playSong(song),

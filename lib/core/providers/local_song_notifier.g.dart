@@ -13,7 +13,11 @@ part of 'local_song_notifier.dart';
 const localSongsProvider = LocalSongsNotifierProvider._();
 
 final class LocalSongsNotifierProvider
-    extends $AsyncNotifierProvider<LocalSongsNotifier, List<LocalSongModel>> {
+    extends
+        $NotifierProvider<
+          LocalSongsNotifier,
+          AsyncValue<List<LocalSongModel>>
+        > {
   const LocalSongsNotifierProvider._()
     : super(
         from: null,
@@ -31,27 +35,40 @@ final class LocalSongsNotifierProvider
   @$internal
   @override
   LocalSongsNotifier create() => LocalSongsNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<List<LocalSongModel>> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<List<LocalSongModel>>>(
+        value,
+      ),
+    );
+  }
 }
 
 String _$localSongsNotifierHash() =>
-    r'a2bcfb87d6cace95ba4bb11370d6a71d59f9c926';
+    r'c6eb158b53b122e423fcee798bfb7a481e729ec4';
 
 abstract class _$LocalSongsNotifier
-    extends $AsyncNotifier<List<LocalSongModel>> {
-  FutureOr<List<LocalSongModel>> build();
+    extends $Notifier<AsyncValue<List<LocalSongModel>>> {
+  AsyncValue<List<LocalSongModel>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
     final ref =
         this.ref
-            as $Ref<AsyncValue<List<LocalSongModel>>, List<LocalSongModel>>;
+            as $Ref<
+              AsyncValue<List<LocalSongModel>>,
+              AsyncValue<List<LocalSongModel>>
+            >;
     final element =
         ref.element
             as $ClassProviderElement<
               AnyNotifier<
                 AsyncValue<List<LocalSongModel>>,
-                List<LocalSongModel>
+                AsyncValue<List<LocalSongModel>>
               >,
               AsyncValue<List<LocalSongModel>>,
               Object?,
