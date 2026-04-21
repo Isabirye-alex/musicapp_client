@@ -15,11 +15,13 @@ const getAllSongsProvider = GetAllSongsProvider._();
 final class GetAllSongsProvider
     extends
         $FunctionalProvider<
-          AsyncValue<List<SongModel>>,
-          List<SongModel>,
-          FutureOr<List<SongModel>>
+          AsyncValue<List<RemoteSongModel>>,
+          List<RemoteSongModel>,
+          FutureOr<List<RemoteSongModel>>
         >
-    with $FutureModifier<List<SongModel>>, $FutureProvider<List<SongModel>> {
+    with
+        $FutureModifier<List<RemoteSongModel>>,
+        $FutureProvider<List<RemoteSongModel>> {
   const GetAllSongsProvider._()
     : super(
         from: null,
@@ -36,17 +38,58 @@ final class GetAllSongsProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<SongModel>> $createElement(
+  $FutureProviderElement<List<RemoteSongModel>> $createElement(
     $ProviderPointer pointer,
   ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<SongModel>> create(Ref ref) {
+  FutureOr<List<RemoteSongModel>> create(Ref ref) {
     return getAllSongs(ref);
   }
 }
 
-String _$getAllSongsHash() => r'f647cf16a68acef24d2a59c86617fdcf86dc7c3f';
+String _$getAllSongsHash() => r'd7f804bfe6fc592ceaae285467a1386eb7fbb0c2';
+
+@ProviderFor(getDeviceSongs)
+const getDeviceSongsProvider = GetDeviceSongsProvider._();
+
+final class GetDeviceSongsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<LocalSongModel>>,
+          List<LocalSongModel>,
+          FutureOr<List<LocalSongModel>>
+        >
+    with
+        $FutureModifier<List<LocalSongModel>>,
+        $FutureProvider<List<LocalSongModel>> {
+  const GetDeviceSongsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getDeviceSongsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getDeviceSongsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<LocalSongModel>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<LocalSongModel>> create(Ref ref) {
+    return getDeviceSongs(ref);
+  }
+}
+
+String _$getDeviceSongsHash() => r'5b5e35a807b1de5fcf36da95ae66cc38ab778810';
 
 @ProviderFor(getAllPlatformSongs)
 const getAllPlatformSongsProvider = GetAllPlatformSongsProvider._();
@@ -54,11 +97,13 @@ const getAllPlatformSongsProvider = GetAllPlatformSongsProvider._();
 final class GetAllPlatformSongsProvider
     extends
         $FunctionalProvider<
-          AsyncValue<List<SongModel>>,
-          List<SongModel>,
-          FutureOr<List<SongModel>>
+          AsyncValue<List<RemoteSongModel>>,
+          List<RemoteSongModel>,
+          FutureOr<List<RemoteSongModel>>
         >
-    with $FutureModifier<List<SongModel>>, $FutureProvider<List<SongModel>> {
+    with
+        $FutureModifier<List<RemoteSongModel>>,
+        $FutureProvider<List<RemoteSongModel>> {
   const GetAllPlatformSongsProvider._()
     : super(
         from: null,
@@ -75,24 +120,25 @@ final class GetAllPlatformSongsProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<SongModel>> $createElement(
+  $FutureProviderElement<List<RemoteSongModel>> $createElement(
     $ProviderPointer pointer,
   ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<SongModel>> create(Ref ref) {
+  FutureOr<List<RemoteSongModel>> create(Ref ref) {
     return getAllPlatformSongs(ref);
   }
 }
 
 String _$getAllPlatformSongsHash() =>
-    r'102239b79a312ad1cf67148f1c1f78f6f722d348';
+    r'2324be3666d2819cd7124eeb334edf8664d5362f';
 
 @ProviderFor(HomeViewmodel)
 const homeViewmodelProvider = HomeViewmodelProvider._();
 
 final class HomeViewmodelProvider
-    extends $NotifierProvider<HomeViewmodel, AsyncValue<List<SongModel>>> {
+    extends
+        $NotifierProvider<HomeViewmodel, AsyncValue<List<RemoteSongModel>>> {
   const HomeViewmodelProvider._()
     : super(
         from: null,
@@ -112,33 +158,39 @@ final class HomeViewmodelProvider
   HomeViewmodel create() => HomeViewmodel();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<List<SongModel>> value) {
+  Override overrideWithValue(AsyncValue<List<RemoteSongModel>> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<List<SongModel>>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<List<RemoteSongModel>>>(
+        value,
+      ),
     );
   }
 }
 
-String _$homeViewmodelHash() => r'37caa5c581b0856befe8fd220a1f0821362b9ab0';
+String _$homeViewmodelHash() => r'82bac7c5453bc2247ed49952fdd2616bf5f661b8';
 
-abstract class _$HomeViewmodel extends $Notifier<AsyncValue<List<SongModel>>> {
-  AsyncValue<List<SongModel>> build();
+abstract class _$HomeViewmodel
+    extends $Notifier<AsyncValue<List<RemoteSongModel>>> {
+  AsyncValue<List<RemoteSongModel>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
     final ref =
         this.ref
-            as $Ref<AsyncValue<List<SongModel>>, AsyncValue<List<SongModel>>>;
+            as $Ref<
+              AsyncValue<List<RemoteSongModel>>,
+              AsyncValue<List<RemoteSongModel>>
+            >;
     final element =
         ref.element
             as $ClassProviderElement<
               AnyNotifier<
-                AsyncValue<List<SongModel>>,
-                AsyncValue<List<SongModel>>
+                AsyncValue<List<RemoteSongModel>>,
+                AsyncValue<List<RemoteSongModel>>
               >,
-              AsyncValue<List<SongModel>>,
+              AsyncValue<List<RemoteSongModel>>,
               Object?,
               Object?
             >;

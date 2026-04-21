@@ -1,14 +1,16 @@
 import 'dart:io';
 import 'package:fpdart/fpdart.dart' hide State;
+import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
-import 'package:little_music/features/home/models/song_model.dart';
+import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:little_music/features/home/repositories/home_local_repository.dart';
 import 'package:little_music/features/home/repositories/home_remote_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 part 'home_viewmodel.g.dart';
 
 @riverpod
-Future<List<SongModel>> getAllSongs(Ref ref) async {
+Future<List<RemoteSongModel>> getAllSongs(Ref ref) async {
   final token = ref.watch(authLocalRepositoryProvider).getToken();
   if (token == null) {
     return [];
@@ -23,8 +25,14 @@ Future<List<SongModel>> getAllSongs(Ref ref) async {
   return val;
 }
 
+// Device songs provider
 @riverpod
-Future<List<SongModel>> getAllPlatformSongs(Ref ref) async {
+Future<List<LocalSongModel>> getDeviceSongs(Ref ref) async {
+  return ref.read(currentSongProvider.notifier).fetchDeviceSongs();
+}
+
+@riverpod
+Future<List<RemoteSongModel>> getAllPlatformSongs(Ref ref) async {
   final res = await ref
       .watch(homeRemoteRepositoryProvider)
       .fetchAllPlatformSongs(); 
@@ -44,7 +52,7 @@ class HomeViewmodel extends _$HomeViewmodel {
   late HomeLocalRepository _homeLocalRepository;
 
   @override
-  AsyncValue<List<SongModel>> build() {
+  AsyncValue<List<RemoteSongModel>> build() {
     _homeRemoteRepository = ref.watch(homeRemoteRepositoryProvider);
     _authLocalRepository = ref.watch(authLocalRepositoryProvider);
     _homeLocalRepository = ref.watch(homeLocalRepositoryProvider);
@@ -77,7 +85,7 @@ class HomeViewmodel extends _$HomeViewmodel {
     }
   }
 
-  List<SongModel> getRecentlyPlayeSongs() {
+  List<RemoteSongModel> getRecentlyPlayedSongs() {
     return _homeLocalRepository.loadSongs();
   }
 

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
-import 'package:little_music/features/home/models/song_model.dart';
+import 'package:little_music/features/home/models/sealed_model_class.dart';
 
 class SongCard extends StatelessWidget {
-  final SongModel song;
+  final RemoteSongModel song;
   final WidgetRef ref;
 
   const SongCard({super.key, required this.song, required this.ref});

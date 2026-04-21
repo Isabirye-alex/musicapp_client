@@ -13,7 +13,7 @@ part of 'current_song_notifier.dart';
 const currentSongProvider = CurrentSongNotifierProvider._();
 
 final class CurrentSongNotifierProvider
-    extends $NotifierProvider<CurrentSongNotifier, SongModel?> {
+    extends $NotifierProvider<CurrentSongNotifier, SongsModel?> {
   const CurrentSongNotifierProvider._()
     : super(
         from: null,
@@ -33,29 +33,29 @@ final class CurrentSongNotifierProvider
   CurrentSongNotifier create() => CurrentSongNotifier();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SongModel? value) {
+  Override overrideWithValue(SongsModel? value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<SongModel?>(value),
+      providerOverride: $SyncValueProvider<SongsModel?>(value),
     );
   }
 }
 
 String _$currentSongNotifierHash() =>
-    r'3b6f5feee32a6db5d2d1d5cea8f02bb7bf00d0f9';
+    r'93f0c98e46d8ab872fd1d8854372216fa1de741b';
 
-abstract class _$CurrentSongNotifier extends $Notifier<SongModel?> {
-  SongModel? build();
+abstract class _$CurrentSongNotifier extends $Notifier<SongsModel?> {
+  SongsModel? build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<SongModel?, SongModel?>;
+    final ref = this.ref as $Ref<SongsModel?, SongsModel?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<SongModel?, SongModel?>,
-              SongModel?,
+              AnyNotifier<SongsModel?, SongsModel?>,
+              SongsModel?,
               Object?,
               Object?
             >;

@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:little_music/features/home/models/song_model.dart';
+import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'home_local_repository.g.dart';
 
@@ -11,18 +11,18 @@ HomeLocalRepository homeLocalRepository(Ref ref) {
 class HomeLocalRepository {
   final Box box = Hive.box('songs_box');
 
-  void uploadLocalSongs(SongModel song) {
+  void uploadLocalSongs(RemoteSongModel song) {
     box.put(song.songId, song.toJson());
   }
 
-    List<SongModel> loadSongs() {
-    List<SongModel> songs = [];
+    List<RemoteSongModel> loadSongs() {
+    List<RemoteSongModel> songs = [];
 
     for (final k in box.keys) {
       final value = box.get(k);
       
       final Map<String, dynamic> songMap = Map<String, dynamic>.from(value);
-      songs.add(SongModel.fromJson(songMap));
+      songs.add(RemoteSongModel.fromJson(songMap));
     }
     return songs;
   }

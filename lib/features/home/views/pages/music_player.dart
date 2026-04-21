@@ -41,7 +41,7 @@ class MusicPlayer extends ConsumerWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       image: DecorationImage(
-                        image: NetworkImage(currentSong.thumbnail),
+                        image: NetworkImage(currentSong.thumbnailUrl),
 
                         fit: BoxFit.cover,
                       ),
@@ -61,14 +61,14 @@ class MusicPlayer extends ConsumerWidget {
                         Column(
                           children: [
                             Text(
-                              currentSong.songName,
+                              currentSong.displayTitle,
                               style: TextTheme.of(context).bodyLarge?.copyWith(
                                 overflow: TextOverflow.ellipsis,
                               ),
                               maxLines: 1,
                             ),
                             Text(
-                              currentSong.artistName,
+                              currentSong.displayArtist,
                               style: TextTheme.of(context).bodyLarge?.copyWith(
                                 overflow: TextOverflow.ellipsis,
                                 color: AColorTheme.gradient1,

@@ -37,7 +37,10 @@ class AuthRemoteRepository {
       if (response.statusCode == 201) {
         return Right(result['message']);
       } else {
-        return Left(AppFailure(message: result['detail'] ?? 'Signup failed'));
+        final detail = result['detail'];
+
+        final message = detail[0]['message'];
+        return Left(AppFailure(message: message ?? 'Signup failed'));
       }
     } catch (e) {
       return Left(AppFailure(message: e.toString()));

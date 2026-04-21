@@ -1,7 +1,8 @@
 import 'package:just_audio/just_audio.dart';
-import 'package:little_music/features/home/models/local_song_model.dart';
 import 'package:little_music/features/home/repositories/local_songs_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../features/home/models/sealed_model_class.dart';
 part 'local_song_notifier.g.dart';
 
 @riverpod

@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart' hide State;
 import 'package:http/http.dart' as http;
 import 'package:little_music/core/constants/server_constants.dart';
 import 'package:little_music/core/failure/failure.dart';
-import 'package:little_music/features/home/models/song_model.dart';
+import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'home_remote_repository.g.dart';
 
@@ -14,7 +14,7 @@ HomeRemoteRepository homeRemoteRepository(Ref ref) {
 }
 
 class HomeRemoteRepository {
-  Future<Either<AppFailure, SongModel>> uploadSong(
+  Future<Either<AppFailure, RemoteSongModel>> uploadSong(
     File song,
     File thumbnail,
     String songName,
@@ -41,7 +41,7 @@ class HomeRemoteRepository {
       final response = await http.Response.fromStream(streamedResponse);
       final data = response.body;
       if (response.statusCode == 201) {
-        return Right(SongModel.fromJson(jsonDecode(data)));
+        return Right(RemoteSongModel.fromJson(jsonDecode(data)));
       } else {
         return Left(
           AppFailure(
@@ -54,7 +54,7 @@ class HomeRemoteRepository {
     }
   }
 
-  Future<Either<AppFailure, List<SongModel>>> fetchAllUserSongs(
+  Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllUserSongs(
     String token,
   ) async {
     try {
@@ -70,9 +70,9 @@ class HomeRemoteRepository {
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        final List<SongModel> res = result
-            .map<SongModel>(
-              (s) => SongModel.fromJson(s as Map<String, dynamic>),
+        final List<RemoteSongModel> res = result
+            .map<RemoteSongModel>(
+              (s) => RemoteSongModel.fromJson(s as Map<String, dynamic>),
             )
             .toList();
         return Right(res);
@@ -88,7 +88,7 @@ class HomeRemoteRepository {
     }
   }
 
- Future<Either<AppFailure, List<SongModel>>> fetchAllPlatformSongs() async {
+ Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllPlatformSongs() async {
     try {
       final response = await http.get(
         Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/all'),
@@ -96,9 +96,9 @@ class HomeRemoteRepository {
       );
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        final List<SongModel> res = result
-            .map<SongModel>(
-              (s) => SongModel.fromJson(s as Map<String, dynamic>),
+        final List<RemoteSongModel> res = result
+            .map<RemoteSongModel>(
+              (s) => RemoteSongModel.fromJson(s as Map<String, dynamic>),
             )
             .toList();
         return Right(res);

@@ -1,5 +1,5 @@
 import 'package:file_picker/file_picker.dart';
-import 'package:little_music/features/home/models/local_song_model.dart';
+import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'local_songs_repository.g.dart';
 
@@ -27,6 +27,7 @@ class LocalSongsRepository {
             artist: 'Unknown Artist',
             path: f.path!,
             duration: 0,
+            album: 'Unknown Album',
           ),
         )
         .toList();

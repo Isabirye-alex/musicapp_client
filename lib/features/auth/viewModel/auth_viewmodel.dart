@@ -39,19 +39,11 @@ class AuthViewmodel extends _$AuthViewmodel {
       password,
     );
 
-    if (res is Right) {
-      final successMessage = (res as Right).value;
-
-      state = AsyncValue.data(successMessage);
-      return successMessage;
-    }
-
-    if (res is Left) {
-      final failure = (res as Left).value;
-
-      state = AsyncValue.error(failure.message, StackTrace.current);
-      return null;
-    }
+    
+    final val = switch(res){
+      Right(value : final r) => state = AsyncValue.data(null),
+      Left(value: final l) => state = AsyncValue.error(l.message, StackTrace.current)
+    };
 
     return null;
   }

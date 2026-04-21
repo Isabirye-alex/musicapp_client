@@ -12,8 +12,7 @@ class LibraryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recentlyPlayedSongs = ref
-        .watch(homeViewmodelProvider.notifier)
-        .getRecentlyPlayeSongs();
+        .watch(homeViewmodelProvider.notifier).getRecentlyPlayedSongs();
 
     return SafeArea(
       child: Padding(
@@ -158,16 +157,22 @@ class LibraryPage extends ConsumerWidget {
                         ),
                       );
                     }
-                    return SizedBox(
-                      height: 240,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: data.length,
-                        itemBuilder: (context, index) {
-                          final song = data[index];
-                          return SongCard(song: song, ref: ref);
-                        },
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.only(bottom: 10),
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200,
+                        mainAxisSpacing: 0,
+                        mainAxisExtent: 250,
+                        crossAxisSpacing: 2,
                       ),
+                      scrollDirection: Axis.vertical,
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final song = data[index];
+                        return SongCard(song: song, ref: ref);
+                      },
                     );
                   },
                   error: (e, _) => Text(
