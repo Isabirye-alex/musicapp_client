@@ -49,6 +49,7 @@ class RemoteSongModel extends SongsModel {
   final String thumbnail;
   final String artistName;
   final String songName;
+  @override
   final String hexCode;
   final String songId;
   final String userId;
@@ -112,6 +113,7 @@ class RemoteSongModel extends SongsModel {
 // ── Local (device) song
 
 class LocalSongModel extends SongsModel {
+  @override
   final String id;
   final String title;
   final String artist;

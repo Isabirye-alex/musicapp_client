@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:little_music/features/home/models/sealed_model_class.dart';
+import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart' hide SongModel;
@@ -109,6 +110,7 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
         ref.notifyListeners();
       }
     });
+
   }
   void playAndPause() async {
     if (isPlaying) {

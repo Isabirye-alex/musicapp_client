@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
+import 'package:little_music/features/home/repositories/home_local_repository.dart';
+import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 
 class SongCard extends StatelessWidget {
   final RemoteSongModel song;
@@ -13,7 +15,11 @@ class SongCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => ref.read(currentSongProvider.notifier).updateSong(song),
+      onTap: () {
+        ref.read(currentSongProvider.notifier).updateSong(song);
+        ref.watch(homeLocalRepositoryProvider).uploadLocalSongs(song);
+      
+      },
       child: Padding(
         padding: const EdgeInsets.only(right: 12),
         child: Column(
