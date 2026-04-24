@@ -5,6 +5,12 @@ import 'package:on_audio_query/on_audio_query.dart';
 sealed class SongsModel {
   const SongsModel();
 
+  // In your sealed base class
+  bool get favoriteStatus => switch (this) {
+    RemoteSongModel s => s.isFavorite,
+    LocalSongModel _ => false,
+  };
+
   String get displayTitle =>
       switch (this) {
         RemoteSongModel s => s.songName,
@@ -46,16 +52,17 @@ sealed class SongsModel {
 
 class RemoteSongModel extends SongsModel {
   final String song;
+  final bool isFavorite;
   final String thumbnail;
   final String artistName;
   final String songName;
-  @override
   final String hexCode;
   final String songId;
   final String userId;
 
   const RemoteSongModel({
     required this.song,
+    this.isFavorite = false,
     required this.thumbnail,
     required this.artistName,
     required this.songName,
@@ -72,6 +79,7 @@ class RemoteSongModel extends SongsModel {
     'hex_node':     hexCode,
     'song_id':      songId,
     'user_id':      userId,
+    'is_favorite': isFavorite
   };
 
   factory RemoteSongModel.fromJson(Map<String, dynamic> json) {
@@ -83,6 +91,7 @@ class RemoteSongModel extends SongsModel {
       hexCode:    json['hex_code']      ?? '',
       songId:     json['song_id']       ?? '',
       userId:     json['user_id']       ?? '',
+      isFavorite: json['is_favorite'] ?? false
     );
   }
 
@@ -94,6 +103,7 @@ class RemoteSongModel extends SongsModel {
     String? hexCode,
     String? songId,
     String? userId,
+    bool? isFavorite
   }) {
     return RemoteSongModel(
       song:       song       ?? this.song,
@@ -103,17 +113,15 @@ class RemoteSongModel extends SongsModel {
       hexCode:    hexCode    ?? this.hexCode,
       songId:     songId     ?? this.songId,
       userId:     userId     ?? this.userId,
+      isFavorite: isFavorite ??  this.isFavorite
     );
   }
 
-
-
 }
 
-// ── Local (device) song
+//Local (device) song
 
 class LocalSongModel extends SongsModel {
-  @override
   final String id;
   final String title;
   final String artist;

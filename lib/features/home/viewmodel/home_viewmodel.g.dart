@@ -131,7 +131,7 @@ final class GetAllPlatformSongsProvider
 }
 
 String _$getAllPlatformSongsHash() =>
-    r'2324be3666d2819cd7124eeb334edf8664d5362f';
+    r'c0f40f3d57f3a23b99101e7b332e96134d3bbc31';
 
 @ProviderFor(HomeViewmodel)
 const homeViewmodelProvider = HomeViewmodelProvider._();
@@ -168,7 +168,7 @@ final class HomeViewmodelProvider
   }
 }
 
-String _$homeViewmodelHash() => r'82bac7c5453bc2247ed49952fdd2616bf5f661b8';
+String _$homeViewmodelHash() => r'2e40564643178e7734669f496f4a25eea4fbcbae';
 
 abstract class _$HomeViewmodel
     extends $Notifier<AsyncValue<List<RemoteSongModel>>> {

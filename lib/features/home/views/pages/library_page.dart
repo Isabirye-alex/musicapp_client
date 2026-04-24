@@ -41,7 +41,7 @@ class LibraryPage extends ConsumerWidget {
                   mainAxisSpacing: 8,
                   crossAxisSpacing: 8,
                 ),
-                itemCount: recentlyPlayedSongs.length,
+                itemCount: 6,
                 itemBuilder: (context, index) {
                   final song = recentlyPlayedSongs[index];
                   return GestureDetector(

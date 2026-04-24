@@ -88,11 +88,11 @@ class HomeRemoteRepository {
     }
   }
 
- Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllPlatformSongs() async {
+ Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllPlatformSongs(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/all'),
-        headers: {'Content-Type': 'application/json'}, // ✅ no token
+        Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/platform/all'),
+        headers: {'Content-Type': 'application/json', 'x-auth-token': token},
       );
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
@@ -111,4 +111,36 @@ class HomeRemoteRepository {
     } catch (e) {
       return Left(AppFailure(message: e.toString()));
     }
-  } }
+  }
+
+  Future<Either<AppFailure, RemoteSongModel>> toggleFavorite(
+      String songId,
+      String token,
+      ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/favorites/$songId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+        return Right(RemoteSongModel.fromJson(result));
+      } else {
+        final result = jsonDecode(response.body);
+
+        return Left(
+          AppFailure(message: result['detail'] ?? 'Error toggling favorite'),
+        );
+      }
+    } catch (e) {
+      return Left(AppFailure(message: e.toString()));
+    }
+  }
+
+
+
+}

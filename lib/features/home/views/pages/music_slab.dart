@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
+import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/music_player.dart';
 import 'package:little_music/utilis/color_converter.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -15,6 +16,8 @@ class MusicSlab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentSong = ref.watch(currentSongProvider);
     final songNotifier = ref.watch(currentSongProvider.notifier);
+
+
     if (currentSong == null) {
       return const SizedBox();
     }
@@ -93,7 +96,7 @@ class MusicSlab extends ConsumerWidget {
                               currentSong.displayTitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextTheme.of(context).bodyMedium!.copyWith(
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                     color: AColorTheme.gradient1,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -102,7 +105,7 @@ class MusicSlab extends ConsumerWidget {
                               currentSong.displayArtist,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextTheme.of(context).bodyMedium!.copyWith(
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                     color: AColorTheme.subtitleText,
                                   ),
                             ),
@@ -115,8 +118,10 @@ class MusicSlab extends ConsumerWidget {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
+                      onPressed: () async {
+                        await ref.read(homeViewmodelProvider.notifier).toggleFavorite();
+                      },
+                      icon: currentSong.favoriteStatus == true ? const Icon(CupertinoIcons.heart_fill, color: AColorTheme.accent,) : const Icon(
                         CupertinoIcons.heart,
                         color: AColorTheme.gradient1,
                       ),

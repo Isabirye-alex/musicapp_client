@@ -25,7 +25,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      title: 'MusicApp',
+      title: 'ATLAS',
       themeMode: ThemeMode.system,
       theme: AAppTheme.lightTheme,
       darkTheme: AAppTheme.darkTheme,

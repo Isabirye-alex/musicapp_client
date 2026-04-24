@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
-import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../models/sealed_model_class.dart';
 part 'home_local_repository.g.dart';
 
 @riverpod

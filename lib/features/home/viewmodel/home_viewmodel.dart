@@ -25,6 +25,8 @@ Future<List<RemoteSongModel>> getAllSongs(Ref ref) async {
   return val;
 }
 
+
+
 // Device songs provider
 @riverpod
 Future<List<LocalSongModel>> getDeviceSongs(Ref ref) async {
@@ -33,9 +35,13 @@ Future<List<LocalSongModel>> getDeviceSongs(Ref ref) async {
 
 @riverpod
 Future<List<RemoteSongModel>> getAllPlatformSongs(Ref ref) async {
+  final token = ref.watch(authLocalRepositoryProvider).getToken();
+  if (token == null){
+    return [];
+  }
   final res = await ref
       .watch(homeRemoteRepositoryProvider)
-      .fetchAllPlatformSongs(); 
+      .fetchAllPlatformSongs(token);
 
   final val = switch (res) {
     Right(value: final r) => r,
@@ -89,5 +95,26 @@ class HomeViewmodel extends _$HomeViewmodel {
     return _homeLocalRepository.loadSongs();
   }
 
-  
+  Future<void> toggleFavorite() async {
+    final currentSong = ref.read(currentSongProvider);
+    if (currentSong == null || currentSong is! RemoteSongModel) return;
+
+    final token = ref.read(authLocalRepositoryProvider).getToken();
+    if (token == null) return;
+
+    ref.read(currentSongProvider.notifier).updateFavoriteStatus(!currentSong.isFavorite);
+
+    final res = await _homeRemoteRepository.toggleFavorite(currentSong.id, token);
+
+    switch (res) {
+      case Left(value: final l):
+
+        ref.read(currentSongProvider.notifier).updateFavoriteStatus(currentSong.isFavorite);
+        state = AsyncValue.error(l.message, StackTrace.current);
+      case Right(value: final r):
+
+        ref.read(currentSongProvider.notifier).updateFavoriteStatus(r.isFavorite);
+    }
+  }
+
 }

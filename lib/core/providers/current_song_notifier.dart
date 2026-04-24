@@ -130,4 +130,11 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
       ),
     );
   }
+
+  void updateFavoriteStatus(bool isFavorite) {
+    final current = state;
+    if (current is RemoteSongModel) {
+      state = current.copyWith(isFavorite: isFavorite);
+    }
+  }
 }
