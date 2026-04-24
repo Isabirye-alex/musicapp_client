@@ -4,7 +4,6 @@ import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:little_music/features/home/repositories/home_local_repository.dart';
-import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 
 class SongCard extends StatelessWidget {
   final RemoteSongModel song;

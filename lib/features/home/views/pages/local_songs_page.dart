@@ -74,7 +74,7 @@ class LocalSongsPage extends ConsumerWidget {
                     selectedTileColor: Theme.of(context)
                         .colorScheme
                         .primary
-                        .withOpacity(0.08),
+                        .withAlpha(100),
                     leading: CircleAvatar(
                       backgroundColor: isCurrent
                           ? AColorTheme.gradient3

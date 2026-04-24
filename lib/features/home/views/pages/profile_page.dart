@@ -56,15 +56,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
 
     if (currentUser == null) {
-      return const LoginPrompt();
+      return LoginPrompt();
     }
 
     return Scaffold(
       appBar: _buildAppBar(currentUser),
       body: isLoading
-          ? const Loader()
+          ? Loader()
           : Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: isEditMode
                   ? ProfileEditMode(
                       formKey: formKey,
@@ -73,12 +73,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       emailController: emailController,
                       currentPasswordController: currentPasswordController,
                       newPasswordController: newPasswordController,
-                      showChangePassword: showChangePassword,
-                      onToggleChangePassword: () {
-                        setState(() {
-                          showChangePassword = !showChangePassword;
-                        });
-                      },
+
                       onSave: _saveProfile,
                       onLogout: _logout,
                     )
@@ -89,7 +84,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   PreferredSizeWidget _buildAppBar(currentUser) {
     return AppBar(
-      title: const Text('Profile'),
+      title: Text('Profile', style: TextTheme.of(context).headlineMedium),
+      centerTitle: true,
       actions: [
         if (!isEditMode)
           IconButton(
@@ -98,7 +94,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           )
         else
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close),
             onPressed: () => setState(() {
               isEditMode = false;
               showChangePassword = false;

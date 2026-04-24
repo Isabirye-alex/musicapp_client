@@ -17,7 +17,7 @@ class ProfileViewMode extends StatelessWidget {
     return Column(
       children: [
         ProfileAvatar(user: user),
-        const SizedBox(height: 16),
+       SizedBox(height: 16),
 
         Text(
           '${user.firstName} ${user.lastName}',
@@ -26,7 +26,7 @@ class ProfileViewMode extends StatelessWidget {
 
         Text(user.email),
 
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
 
         ProfileInfoCard(
           icon: Icons.person,
