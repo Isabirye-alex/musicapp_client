@@ -9,7 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_viewmodel.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<List<RemoteSongModel>> getAllSongs(Ref ref) async {
   final token = ref.watch(authLocalRepositoryProvider).getToken();
   if (token == null) {
@@ -25,20 +25,10 @@ Future<List<RemoteSongModel>> getAllSongs(Ref ref) async {
   return val;
 }
 
-
-
-// Device songs provider
-@riverpod
-Future<List<LocalSongModel>> getDeviceSongs(Ref ref) async {
-  return ref.read(currentSongProvider.notifier).fetchDeviceSongs();
-}
-
-@riverpod
+@Riverpod(keepAlive: true)
 Future<List<RemoteSongModel>> getAllPlatformSongs(Ref ref) async {
   final token = ref.watch(authLocalRepositoryProvider).getToken();
-  if (token == null){
-    return [];
-  }
+
   final res = await ref
       .watch(homeRemoteRepositoryProvider)
       .fetchAllPlatformSongs(token);
@@ -85,7 +75,8 @@ class HomeViewmodel extends _$HomeViewmodel {
     );
     switch (res) {
       case Right():
-        state = const AsyncValue.data([]); //
+        ref.invalidate(getAllSongsProvider); // 👈 force re-fetch after upload
+        state = const AsyncValue.data([]);
       case Left(value: final l):
         state = AsyncValue.error(l.message, StackTrace.current);
     }
@@ -102,19 +93,25 @@ class HomeViewmodel extends _$HomeViewmodel {
     final token = ref.read(authLocalRepositoryProvider).getToken();
     if (token == null) return;
 
-    ref.read(currentSongProvider.notifier).updateFavoriteStatus(!currentSong.isFavorite);
+    ref
+        .read(currentSongProvider.notifier)
+        .updateFavoriteStatus(!currentSong.isFavorite);
 
-    final res = await _homeRemoteRepository.toggleFavorite(currentSong.id, token);
+    final res = await _homeRemoteRepository.toggleFavorite(
+      currentSong.id,
+      token,
+    );
 
     switch (res) {
       case Left(value: final l):
-
-        ref.read(currentSongProvider.notifier).updateFavoriteStatus(currentSong.isFavorite);
+        ref
+            .read(currentSongProvider.notifier)
+            .updateFavoriteStatus(currentSong.isFavorite);
         state = AsyncValue.error(l.message, StackTrace.current);
       case Right(value: final r):
-
-        ref.read(currentSongProvider.notifier).updateFavoriteStatus(r.isFavorite);
+        ref
+            .read(currentSongProvider.notifier)
+            .updateFavoriteStatus(r.isFavorite);
     }
   }
-
 }

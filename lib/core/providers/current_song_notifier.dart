@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:on_audio_query/on_audio_query.dart' hide SongModel;
 part 'current_song_notifier.g.dart';
 
 @riverpod
@@ -13,86 +11,41 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
   bool isPlaying = false;
   AudioPlayer? audioPlayer;
 
-  final OnAudioQuery _audioQuery = OnAudioQuery();
-  List<LocalSongModel> deviceSongs = [];
-
   @override
   SongsModel? build() {
     return null;
   }
 
-  // Permission
+  List<RemoteSongModel> _playlist = [];
+  int _currentIndex = -1;
 
-  Future<bool> requestPermission() async {
-    return await _audioQuery.permissionsRequest();
+  void setPlaylist(List<RemoteSongModel> songs, {int startIndex = 0}) {
+    _playlist = songs;
+    _currentIndex = startIndex;
+    updateSong(_playlist[_currentIndex]);
   }
 
-  //Device song queries
+  void nextSong() {
+    if (_playlist.isEmpty) return;
 
-  Future<List<LocalSongModel>> fetchDeviceSongs({
-    SongSortType sortType = SongSortType.TITLE,
-    OrderType orderType = OrderType.ASC_OR_SMALLER,
-    int minDuration = 30000,
-  }) async {
-    final hasPermission = await requestPermission();
-    if (!hasPermission) {
-      throw Exception('Storage permission denied. Cannot query device songs.');
-    }
-
-    final rawSongs = await _audioQuery.querySongs(
-      sortType: sortType,
-      orderType: orderType,
-      uriType: UriType.EXTERNAL,
-      ignoreCase: true,
-    );
-
-    deviceSongs = rawSongs
-        .where((s) => (s.duration ?? 0) >= minDuration && s.uri != null)
-        .map((s) => LocalSongModel.fromAudioQuery(s))  // ← uses factory
-        .toList();
-
-    return deviceSongs;
+    _currentIndex = (_currentIndex + 1) % _playlist.length;
+    updateSong(_playlist[_currentIndex]);
   }
 
-  Future<List<LocalSongModel>> fetchSongsByAlbum(String album) async {
-    if (deviceSongs.isEmpty) await fetchDeviceSongs();
-    return deviceSongs
-        .where((s) => s.album.toLowerCase() == album.toLowerCase())
-        .toList();
+  void previousSong() {
+    if (_playlist.isEmpty) return;
+
+    _currentIndex = (_currentIndex - 1 + _playlist.length) % _playlist.length;
+    updateSong(_playlist[_currentIndex]);
   }
 
-  Future<List<LocalSongModel>> fetchSongsByArtist(String artist) async {
-    if (deviceSongs.isEmpty) await fetchDeviceSongs();
-    return deviceSongs
-        .where((s) => s.artist.toLowerCase() == artist.toLowerCase())
-        .toList();
-  }
-
-  Future<List<LocalSongModel>> searchSongs(String query) async {
-    if (deviceSongs.isEmpty) await fetchDeviceSongs();
-    final q = query.toLowerCase();
-    return deviceSongs
-        .where((s) =>
-    s.title.toLowerCase().contains(q) ||
-        s.artist.toLowerCase().contains(q))
-        .toList();
-  }
-
-  /// Uses [albumId] from [LocalSongModel] for accurate artwork lookup.
-  /// Falls back to song id if albumId is null.
-  Future<Uint8List?> fetchArtwork(LocalSongModel song) async {
-    return await _audioQuery.queryArtwork(
-      song.albumId ?? int.parse(song.id),
-      ArtworkType.ALBUM,
-      quality: 100,
-      size: 500,
-    );
-  }
-
-  void updateSong(SongsModel song) async {
+  void updateSong(RemoteSongModel song) async {
     _playerStateSubscription?.cancel();
     await audioPlayer?.dispose();
     audioPlayer = AudioPlayer();
+
+    final index = _playlist.indexOf(song);
+    if (index != -1) _currentIndex = index;
 
     final audioSource = AudioSource.uri(Uri.parse(song.audioPath));
     await audioPlayer!.setAudioSource(audioSource);
@@ -101,16 +54,16 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
     state = song;
     isPlaying = true;
 
-    _playerStateSubscription = audioPlayer!.playerStateStream.listen((playerState) {
+    _playerStateSubscription = audioPlayer!.playerStateStream.listen((
+      playerState,
+    ) {
       if (playerState.processingState == ProcessingState.completed) {
-        audioPlayer!.seek(Duration.zero);
-        audioPlayer?.pause();
-        isPlaying = false;
-        ref.notifyListeners();
+        nextSong(); // auto-play next
       }
     });
-
   }
+
+  /// Toggles between play and pause states
   void playAndPause() async {
     if (isPlaying) {
       audioPlayer?.pause();
@@ -122,6 +75,8 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
     ref.notifyListeners();
   }
 
+  /// Seeks to a specific position in the current song
+  /// [value] - Position as a fraction (0.0 to 1.0) of total duration
   void seek(double value) {
     audioPlayer!.seek(
       Duration(
@@ -130,6 +85,8 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
     );
   }
 
+  /// Updates the favorite status of the current song
+  /// [isFavorite] - Whether the song is marked as favorite
   void updateFavoriteStatus(bool isFavorite) {
     final current = state;
     if (current is RemoteSongModel) {

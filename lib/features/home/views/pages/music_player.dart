@@ -120,9 +120,7 @@ class MusicPlayer extends ConsumerWidget {
                                   onChanged: (value) {
                                     sliderValue = value;
                                   },
-                                  onChangeEnd: 
-                                    songNotifier.seek
-                                  
+                                  onChangeEnd: songNotifier.seek,
                                 ),
                               ),
                               Row(
@@ -158,7 +156,15 @@ class MusicPlayer extends ConsumerWidget {
                         children: [
                           Icon(CupertinoIcons.shuffle, size: 30),
 
-                          Icon(CupertinoIcons.backward_end_alt, size: 30),
+                          GestureDetector(
+                            onTap: () {
+                              songNotifier.previousSong();
+                            },
+                            child: Icon(
+                              CupertinoIcons.backward_end_alt,
+                              size: 30,
+                            ),
+                          ),
                           GestureDetector(
                             onTap: songNotifier.playAndPause,
                             child: Container(
@@ -180,7 +186,10 @@ class MusicPlayer extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          Icon(CupertinoIcons.forward_end_alt, size: 30),
+                          GestureDetector(
+                            onTap: songNotifier.nextSong,
+                            child: Icon(CupertinoIcons.forward_end_alt, size: 30),
+                          ),
                           Icon(CupertinoIcons.loop, size: 30),
                         ],
                       ),

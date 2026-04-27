@@ -66,7 +66,6 @@ class HomeRemoteRepository {
         headers: {'Content-Type': 'application/json', 'x-auth-token': token},
       );
 
-      
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
@@ -88,11 +87,12 @@ class HomeRemoteRepository {
     }
   }
 
- Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllPlatformSongs(String token) async {
+ Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllPlatformSongs(String? token) async {
     try {
+
       final response = await http.get(
         Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/platform/all'),
-        headers: {'Content-Type': 'application/json', 'x-auth-token': token},
+        headers: {'Content-Type': 'application/json', 'x-auth-token': ?token},
       );
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
@@ -101,6 +101,7 @@ class HomeRemoteRepository {
               (s) => RemoteSongModel.fromJson(s as Map<String, dynamic>),
             )
             .toList();
+
         return Right(res);
       } else {
         final result = jsonDecode(response.body);

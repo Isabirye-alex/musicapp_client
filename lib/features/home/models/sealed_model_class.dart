@@ -5,7 +5,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 sealed class SongsModel {
   const SongsModel();
 
-  // In your sealed base class
+  
   bool get favoriteStatus => switch (this) {
     RemoteSongModel s => s.isFavorite,
     LocalSongModel _ => false,

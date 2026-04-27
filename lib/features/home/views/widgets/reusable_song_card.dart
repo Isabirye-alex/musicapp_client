@@ -17,7 +17,6 @@ class SongCard extends StatelessWidget {
       onTap: () {
         ref.read(currentSongProvider.notifier).updateSong(song);
         ref.watch(homeLocalRepositoryProvider).uploadLocalSongs(song);
-      
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 12),

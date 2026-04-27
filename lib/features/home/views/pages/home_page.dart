@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/features/home/views/pages/library_page.dart';
-import 'package:little_music/features/home/views/pages/local_songs_page.dart';
 import 'package:little_music/features/home/views/pages/music_slab.dart';
 import 'package:little_music/features/home/views/pages/profile_page.dart';
+import 'package:little_music/features/home/views/pages/recently_played_songs.dart';
 import 'package:little_music/features/home/views/pages/upload_song_page.dart';
+import 'package:little_music/features/home/views/pages/your_uploads.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -20,8 +21,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       LibraryPage(),
-      LocalSongsPage(),
-      UploadSongPage(),
+      YourUploads(),
+      RecentlyPlayedSongs(),
       ProfilePage(),
     ];
 
@@ -33,19 +34,16 @@ class _HomePageState extends ConsumerState<HomePage> {
         onTap: (value) => setState(() => selectedIndex = value),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Library'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.phone_android),
-            label: 'Local Songs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance),
-            label: 'Upload Song',
-          ),
 
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.profile_circled),
-            label: 'Profile',
+            label: 'Your Uploads',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.upload_file),
+            label: 'Recent',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Profile'),
         ],
       ),
       body: Column(

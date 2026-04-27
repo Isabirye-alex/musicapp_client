@@ -8,16 +8,22 @@ part of 'local_song_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Riverpod notifier for managing locally picked songs
+/// Handles song selection, playback, and playlist navigation
 
 @ProviderFor(LocalSongsNotifier)
 const localSongsProvider = LocalSongsNotifierProvider._();
 
+/// Riverpod notifier for managing locally picked songs
+/// Handles song selection, playback, and playlist navigation
 final class LocalSongsNotifierProvider
     extends
         $NotifierProvider<
           LocalSongsNotifier,
           AsyncValue<List<LocalSongModel>>
         > {
+  /// Riverpod notifier for managing locally picked songs
+  /// Handles song selection, playback, and playlist navigation
   const LocalSongsNotifierProvider._()
     : super(
         from: null,
@@ -49,6 +55,9 @@ final class LocalSongsNotifierProvider
 
 String _$localSongsNotifierHash() =>
     r'c6eb158b53b122e423fcee798bfb7a481e729ec4';
+
+/// Riverpod notifier for managing locally picked songs
+/// Handles song selection, playback, and playlist navigation
 
 abstract class _$LocalSongsNotifier
     extends $Notifier<AsyncValue<List<LocalSongModel>>> {

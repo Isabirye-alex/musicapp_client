@@ -1,8 +1,14 @@
+// Text theme configuration
+// Defines text styles for light and dark themes
 import 'package:flutter/material.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 
+/// Text theme configuration for the application
+/// Defines typography styles for various text elements
 class ATextTheme {
-  ATextTheme._();
+  ATextTheme._(); // Private constructor to prevent instantiation
+
+  /// Light mode text theme
   static TextTheme lightTextTheme = TextTheme(
     bodyLarge: TextStyle().copyWith(
       fontSize: 16,

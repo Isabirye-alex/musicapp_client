@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
-import 'package:little_music/features/auth/view/pages/login_page.dart';
 import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
+import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:little_music/features/home/views/widgets/login_prompt.dart';
 import 'package:little_music/features/home/views/widgets/profile_edit_mode.dart';
 import 'package:little_music/features/home/views/widgets/profile_view_mode.dart';
@@ -26,7 +26,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   final formKey = GlobalKey<FormState>();
 
   bool isEditMode = false;
-  bool showChangePassword = false;
 
   @override
   void initState() {
@@ -97,7 +96,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             icon: Icon(Icons.close),
             onPressed: () => setState(() {
               isEditMode = false;
-              showChangePassword = false;
             }),
           ),
       ],
@@ -116,7 +114,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     ref.read(currentUserProvider.notifier).removeUser();
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginPage()),
+      MaterialPageRoute(builder: (_) =>  HomePage()),
       (_) => false,
     );
   }

@@ -17,7 +17,6 @@ class MusicSlab extends ConsumerWidget {
     final currentSong = ref.watch(currentSongProvider);
     final songNotifier = ref.watch(currentSongProvider.notifier);
 
-
     if (currentSong == null) {
       return const SizedBox();
     }
@@ -129,6 +128,7 @@ class MusicSlab extends ConsumerWidget {
                     IconButton(
                       onPressed: () {
                         songNotifier.playAndPause();
+
                       },
                       icon: Icon(
                         songNotifier.isPlaying

@@ -7,6 +7,7 @@ import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/auth/view/widgets/audio_wave.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
+import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:little_music/features/home/views/widgets/login_prompt.dart';
 import 'package:little_music/utilis/custom_text_field.dart';
 import 'package:little_music/utilis/error.dart';
@@ -25,7 +26,7 @@ class UploadSongPage extends ConsumerStatefulWidget {
 class _UploadSongPageState extends ConsumerState<UploadSongPage> {
   final TextEditingController artistNameController = TextEditingController();
   final TextEditingController songNameController = TextEditingController();
-  final selectedColor = AColorTheme.cardColor;
+  Color selectedColor = AColorTheme.cardColor;
   File? selectedImage;
   File? selectedAudio;
 
@@ -39,8 +40,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
   }
 
   void selectAudio() async {
-    final audio =
-        await pickAudio(); //
+    final audio = await pickAudio(); //
     if (audio != null) {
       setState(() {
         selectedAudio = audio;
@@ -55,7 +55,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
     super.dispose();
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserProvider);
     final isLoading = ref.watch(
@@ -80,9 +80,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
 
     //if user is not logged in — prompt to login
     if (currentUser == null) {
-      return Scaffold(
-        body: LoginPrompt(),
-      );
+      return Scaffold(body: LoginPrompt());
     }
 
     // ✅ logged in — show upload page
@@ -97,7 +95,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
               IconButton(
                 onPressed: isLoading
                     ? null
-                    : () {
+                    : () async {
                         if (selectedAudio == null || selectedImage == null) {
                           ErrorHelper.showError(
                             context,
@@ -106,15 +104,20 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                           );
                           return;
                         }
-                        ref
+                        await ref
                             .read(homeViewmodelProvider.notifier)
                             .upload(
                               selectedAudio!,
                               selectedImage!,
                               songNameController.text.trim(),
                               artistNameController.text.trim(),
-                              'FFFFEE',
+                              selectedColor
+                                  .toARGB32()
+                                  .toRadixString(16)
+                                  .substring(2)
+                                  .toUpperCase(),
                             );
+                        Navigator.pop(context);
                       },
                 icon: const Icon(Icons.check),
               ),
@@ -187,11 +190,12 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                 ColorPicker(
                   pickersEnabled: const {ColorPickerType.wheel: true},
                   color: selectedColor,
-                  onColorChanged: (Color color) {},
+                  onColorChanged: (Color color) {
+                    selectedColor = color;
+                  },
                 ),
               ],
             ),
     );
   }
 }
-
