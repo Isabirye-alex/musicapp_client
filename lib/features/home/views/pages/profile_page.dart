@@ -31,7 +31,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   void initState() {
     super.initState();
     final user = ref.read(currentUserProvider)?.user;
-
     firstNameController = TextEditingController(text: user?.firstName ?? '');
     lastNameController = TextEditingController(text: user?.lastName ?? '');
     emailController = TextEditingController(text: user?.email ?? '');
@@ -54,25 +53,45 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       authViewmodelProvider.select((val) => val?.isLoading == true),
     );
 
+    ref.listen(authViewmodelProvider, (prev, next) {
+      final wasLoading = prev?.isLoading == true;
+      if (!wasLoading) return;
+
+      next?.when(
+        data: (user) {
+          if (user != null) {
+            // ✅ FIX 3: isEditMode = false only set here, after success.
+            setState(() => isEditMode = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Profile updated successfully!")),
+            );
+          }
+        },
+        error: (e, _) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(e.toString())));
+        },
+        loading: () {},
+      );
+    });
+
     if (currentUser == null) {
-      return LoginPrompt();
+      return const LoginPrompt();
     }
 
     return Scaffold(
       appBar: _buildAppBar(currentUser),
       body: isLoading
-          ? Loader()
+          ? const Loader()
           : Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: isEditMode
                   ? ProfileEditMode(
                       formKey: formKey,
                       firstNameController: firstNameController,
                       lastNameController: lastNameController,
                       emailController: emailController,
-                      currentPasswordController: currentPasswordController,
-                      newPasswordController: newPasswordController,
-
                       onSave: _saveProfile,
                       onLogout: _logout,
                     )
@@ -93,10 +112,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           )
         else
           IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () => setState(() {
-              isEditMode = false;
-            }),
+            icon: const Icon(Icons.close),
+            onPressed: () => setState(() => isEditMode = false),
           ),
       ],
     );
@@ -104,17 +121,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   void _saveProfile() {
     if (formKey.currentState!.validate()) {
-      // call API later
-      setState(() => isEditMode = false);
+      ref
+          .read(authViewmodelProvider.notifier)
+          .updateUser(
+            firstNameController.text.trim(),
+            lastNameController.text.trim(),
+            emailController.text.trim(),
+          );
+      // ✅ FIX 4: Removed setState(() => isEditMode = false) from here.
+      //    The ref.listen above handles exiting edit mode on success.
     }
   }
 
   void _logout() {
     ref.read(authLocalRepositoryProvider).clearToken();
     ref.read(currentUserProvider.notifier).removeUser();
-
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) =>  HomePage()),
+      MaterialPageRoute(builder: (_) => const HomePage()),
       (_) => false,
     );
   }

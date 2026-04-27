@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/current_user_notifier.dart';
+import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:little_music/utilis/greeting_helper.dart';
 import 'package:little_music/utilis/name_helper.dart';
 
@@ -40,7 +41,12 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
+                    },
                     child: Container(
                       padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(

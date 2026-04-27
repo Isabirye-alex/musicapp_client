@@ -75,8 +75,7 @@ class HomeViewmodel extends _$HomeViewmodel {
     );
     switch (res) {
       case Right():
-        ref.invalidate(getAllSongsProvider); // 👈 force re-fetch after upload
-        state = const AsyncValue.data([]);
+        state = AsyncValue.data([]);
       case Left(value: final l):
         state = AsyncValue.error(l.message, StackTrace.current);
     }

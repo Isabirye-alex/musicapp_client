@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:little_music/features/home/views/widgets/profile_avatar.dart';
 import 'package:little_music/features/home/views/widgets/profile_info_card.dart';
+import 'package:little_music/features/auth/model/user_model.dart';
+import 'package:little_music/utilis/date_formatter.dart';
 
 class ProfileViewMode extends StatelessWidget {
-  final dynamic user;
+  final User user;
   final VoidCallback onLogout;
 
   const ProfileViewMode({
@@ -17,16 +19,16 @@ class ProfileViewMode extends StatelessWidget {
     return Column(
       children: [
         ProfileAvatar(user: user),
-       SizedBox(height: 16),
+        const SizedBox(height: 16),
 
         Text(
           '${user.firstName} ${user.lastName}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
 
-        Text(user.email),
+        Text(user.email, style: Theme.of(context).textTheme.bodyMedium),
 
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
 
         ProfileInfoCard(
           icon: Icons.person,
@@ -43,6 +45,11 @@ class ProfileViewMode extends StatelessWidget {
           icon: Icons.fingerprint,
           label: "User ID",
           value: user.id,
+        ),
+        ProfileInfoCard(
+          icon: Icons.timelapse_sharp,
+          label: "Joined",
+          value: user.joinedAt?.toReadableFull() ?? 'N/A',
         ),
 
         const SizedBox(height: 24),

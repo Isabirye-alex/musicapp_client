@@ -1,4 +1,3 @@
-
 class UserModel {
   /// The authenticated user
   User user;
@@ -44,11 +43,17 @@ class User {
   /// User's email address
   String email;
 
+  DateTime? joinedAt;
+
+  DateTime? updatedAt;
+
   User({
     required this.id,
     required this.firstName,
     required this.lastName,
     required this.email,
+    this.joinedAt,
+    this.updatedAt,
   });
 
   /// Creates User from JSON response
@@ -57,6 +62,12 @@ class User {
     firstName: json["first_name"] ?? '',
     lastName: json["last_name"] ?? '',
     email: json["email"] ?? '',
+    joinedAt: json["created_at"] != null
+        ? DateTime.parse(json["created_at"])
+        : null,
+    updatedAt: json["updated_at"] != null
+        ? DateTime.parse(json["updated_at"])
+        : null,
   );
 
   /// Converts User to JSON for API requests
@@ -65,5 +76,7 @@ class User {
     "first_name": firstName,
     "last_name": lastName,
     "email": email,
+    "created_at": joinedAt,
+    "updated_at": updatedAt,
   };
 }

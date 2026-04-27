@@ -20,8 +20,8 @@ class YourUploads extends ConsumerWidget {
           MaterialPageRoute(builder: (_) => UploadSongPage()),
         ),
         backgroundColor: AColorTheme.gradient1,
-        icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text(
+        icon: Icon(Icons.add_rounded, color: Colors.white),
+        label: Text(
           'Upload Song',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
@@ -30,12 +30,6 @@ class YourUploads extends ConsumerWidget {
         color: AColorTheme.gradient1,
         onRefresh: () async {
           ref.invalidate(getAllSongsProvider);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Refreshing your uploads...'),
-              duration: Duration(seconds: 2),
-            ),
-          );
         },
         child: ListView(
           padding: EdgeInsets.all(16),
@@ -53,7 +47,7 @@ class YourUploads extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(12),
                           color: AColorTheme.gradient1.withAlpha(20),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -68,30 +62,27 @@ class YourUploads extends ConsumerWidget {
                         ),
                       );
                     }
-                    return SizedBox(
-                      height: 500,
-                      child: GridView.builder(
-                        scrollDirection: Axis.horizontal,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                              mainAxisExtent: 200,
-                            ),
-                        itemCount: data.length,
-                        itemBuilder: (context, index) {
-                          final song = data[index];
-                          return SongCard(song: song, ref: ref);
-                        },
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(), // important
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // 2 columns
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 0.75, // adjust for card shape
                       ),
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final song = data[index];
+                        return SongCard(song: song, ref: ref);
+                      },
                     );
                   },
                   error: (e, _) => Text(
                     'Error loading your songs',
                     style: TextStyle(color: Colors.red[300]),
                   ),
-                  loading: () => const Loader(),
+                  loading: () => Loader(),
                 ),
           ],
         ),

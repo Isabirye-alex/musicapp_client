@@ -29,6 +29,7 @@ dependencies:
   on_audio_query: ^2.9.0
   flutter_native_splash: ^2.4.7
   flutter_launcher_icons: ^0.14.4
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

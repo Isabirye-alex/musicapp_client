@@ -100,4 +100,52 @@ class AuthRemoteRepository {
       return Left(AppFailure(message: e.toString()));
     }
   }
+
+  Future<Either<AppFailure, UserModel>> updateUserProfile(
+    String? firstName,
+    String? lastName,
+    String? email,
+    String token,
+  ) async {
+    final result = await http.patch(
+      Uri.parse('${ServerConstants.serverUrl}/api/v1/users/update'),
+      headers: {'Content-Type': 'application/json', 'x-auth-token': token},
+      body: jsonEncode({
+        if (firstName != null) 'first_name': firstName,
+        if (lastName != null) 'last_name': lastName,
+        if (email != null) 'email': email,
+      }),
+    );
+
+    if (result.statusCode == 200) {
+      final userData = jsonDecode(result.body);
+      final user = UserModel.fromJson({
+        'user': userData,
+        'access_token': token,
+      });
+      return Right(user);
+    } else {
+      final error = jsonDecode(result.body);
+      return Left(
+        AppFailure(message: error['detail'] ?? 'Failed to update user profile'),
+      );
+    }
+  }
+
+  Future<bool> deleteAccount(String token) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('${ServerConstants.serverUrl}/api/v1/users/delete'),
+        headers: {'Content-Type': 'application/json', 'x-auth-token': token},
+      );
+
+      if (response.statusCode == 204) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
 }

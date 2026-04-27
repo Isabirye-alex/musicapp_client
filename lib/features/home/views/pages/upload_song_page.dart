@@ -7,7 +7,6 @@ import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/auth/view/widgets/audio_wave.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
-import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:little_music/features/home/views/widgets/login_prompt.dart';
 import 'package:little_music/utilis/custom_text_field.dart';
 import 'package:little_music/utilis/error.dart';
@@ -70,6 +69,9 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
             'Song uploaded successfully',
             'Success',
           );
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (context.mounted) Navigator.pop(context); //
+          });
         },
         error: (error, str) {
           ErrorHelper.showError(context, '$error', error.toString());
@@ -83,7 +85,6 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
       return Scaffold(body: LoginPrompt());
     }
 
-    // ✅ logged in — show upload page
     return Scaffold(
       appBar: AppBar(
         title: Text('Upload Song', style: TextTheme.of(context).headlineLarge),
@@ -117,7 +118,6 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
                                   .substring(2)
                                   .toUpperCase(),
                             );
-                        Navigator.pop(context);
                       },
                 icon: const Icon(Icons.check),
               ),

@@ -127,7 +127,7 @@ final class HomeViewmodelProvider
   }
 }
 
-String _$homeViewmodelHash() => r'bf10e230f8e30f38889b8f1554471946a0d567de';
+String _$homeViewmodelHash() => r'3074e61cdd8eb38ec08c3198350951889c4939c0';
 
 abstract class _$HomeViewmodel
     extends $Notifier<AsyncValue<List<RemoteSongModel>>> {
