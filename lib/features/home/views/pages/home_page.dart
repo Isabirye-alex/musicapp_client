@@ -5,7 +5,6 @@ import 'package:little_music/features/home/views/pages/library_page.dart';
 import 'package:little_music/features/home/views/pages/music_slab.dart';
 import 'package:little_music/features/home/views/pages/profile_page.dart';
 import 'package:little_music/features/home/views/pages/recently_played_songs.dart';
-import 'package:little_music/features/home/views/pages/upload_song_page.dart';
 import 'package:little_music/features/home/views/pages/your_uploads.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -36,14 +35,14 @@ class _HomePageState extends ConsumerState<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Library'),
 
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.profile_circled),
+            icon: Icon(CupertinoIcons.upload_circle),
             label: 'Your Uploads',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Recent'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.upload_file),
-            label: 'Recent',
+            icon: Icon(Icons.account_circle),
+            label: 'Profile',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Profile'),
         ],
       ),
       body: Column(
@@ -53,7 +52,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           //slab always pinned at bottom above nav bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 12),
             child: MusicSlab(),
           ),
         ],

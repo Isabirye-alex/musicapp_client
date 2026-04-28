@@ -76,7 +76,5 @@ class User {
     "first_name": firstName,
     "last_name": lastName,
     "email": email,
-    "created_at": joinedAt,
-    "updated_at": updatedAt,
   };
 }

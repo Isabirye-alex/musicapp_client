@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
+import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/utilis/color_converter.dart';
 import 'package:little_music/utilis/time_helper.dart';
 
@@ -79,12 +80,22 @@ class MusicPlayer extends ConsumerWidget {
                         ),
                         Expanded(child: SizedBox()),
                         IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            CupertinoIcons.heart,
-                            size: 40,
-                            color: AColorTheme.card,
-                          ),
+                          onPressed: () async {
+                            await ref
+                                .read(homeViewmodelProvider.notifier)
+                                .toggleFavorite();
+                          },
+                          icon: currentSong.favoriteStatus == true
+                              ? const Icon(
+                                  CupertinoIcons.heart_fill,
+                                  color: AColorTheme.accent,
+                                  size: 40,
+                                )
+                              : const Icon(
+                                  CupertinoIcons.heart,
+                                  color: AColorTheme.gradient1,
+                                  size: 40,
+                                ),
                         ),
                       ],
                     ),
@@ -100,9 +111,13 @@ class MusicPlayer extends ConsumerWidget {
 
                           final position = snapshot.data ?? Duration.zero;
                           final duration = songNotifier.audioPlayer?.duration;
-                          double sliderValue =
-                              position.inMilliseconds /
-                              duration!.inMilliseconds;
+                          double sliderValue = 0.0;
+                          if (duration!.inMilliseconds > 0) {
+                            sliderValue =
+                                (position.inMilliseconds /
+                                        duration.inMilliseconds)
+                                    .clamp(0.0, 1.0);
+                          }
 
                           return Column(
                             children: [
@@ -188,7 +203,10 @@ class MusicPlayer extends ConsumerWidget {
                           ),
                           GestureDetector(
                             onTap: songNotifier.nextSong,
-                            child: Icon(CupertinoIcons.forward_end_alt, size: 30),
+                            child: Icon(
+                              CupertinoIcons.forward_end_alt,
+                              size: 30,
+                            ),
                           ),
                           Icon(CupertinoIcons.loop, size: 30),
                         ],

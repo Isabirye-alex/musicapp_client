@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart' hide State;
-import 'package:little_music/core/failure/failure.dart';
 import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/features/auth/model/user_model.dart';
 import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
@@ -40,7 +39,7 @@ class AuthViewmodel extends _$AuthViewmodel {
     final res = await _authRemoteRepository.signup(
       firstName,
       lastName,
-      email,
+      email, 
       password,
     );
 
@@ -99,7 +98,6 @@ class AuthViewmodel extends _$AuthViewmodel {
     return state = AsyncValue.data(user);
   }
 
-  // Change return type to void since ProfilePage doesn't use the return value
   Future<void> updateUser(
     String? firstName,
     String? lastName,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import  'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
@@ -29,7 +29,9 @@ class YourUploads extends ConsumerWidget {
       body: RefreshIndicator(
         color: AColorTheme.gradient1,
         onRefresh: () async {
-          ref.invalidate(getAllSongsProvider);
+           ref.invalidate(getAllSongsProvider);
+           await ref.read(getAllSongsProvider.future);
+
         },
         child: ListView(
           padding: EdgeInsets.all(16),

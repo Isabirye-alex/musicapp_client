@@ -9,12 +9,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_viewmodel.g.dart';
 
+enum SongSortOrder {neweset, oldest, name}
+
 @Riverpod(keepAlive: true)
 Future<List<RemoteSongModel>> getAllSongs(Ref ref) async {
   final token = ref.watch(authLocalRepositoryProvider).getToken();
-  if (token == null) {
-    return [];
-  }
+  if (token == null) return [];
   final res = await ref
       .watch(homeRemoteRepositoryProvider)
       .fetchAllUserSongs(token);
@@ -26,45 +26,84 @@ Future<List<RemoteSongModel>> getAllSongs(Ref ref) async {
 }
 
 @Riverpod(keepAlive: true)
-Future<List<RemoteSongModel>> getAllPlatformSongs(Ref ref) async {
-  final token = ref.watch(authLocalRepositoryProvider).getToken();
-
-  final res = await ref
-      .watch(homeRemoteRepositoryProvider)
-      .fetchAllPlatformSongs(token);
-
-  final val = switch (res) {
-    Right(value: final r) => r,
-    Left(value: final l) => throw l.message,
-  };
-  return val;
-}
-
-@riverpod
 class HomeViewmodel extends _$HomeViewmodel {
   late HomeRemoteRepository _homeRemoteRepository;
-  // ignore: unused_field
   late AuthLocalRepository _authLocalRepository;
   late HomeLocalRepository _homeLocalRepository;
+  bool _hasMore = true;
+  // ignore: prefer_final_fields
+  SongSortOrder _sortOrder = SongSortOrder.neweset;
+
+  bool get hasMore => _hasMore;
+  SongSortOrder get sortOrder => _sortOrder;
 
   @override
   AsyncValue<List<RemoteSongModel>> build() {
     _homeRemoteRepository = ref.watch(homeRemoteRepositoryProvider);
     _authLocalRepository = ref.watch(authLocalRepositoryProvider);
     _homeLocalRepository = ref.watch(homeLocalRepositoryProvider);
-    return AsyncValue.data([]);
+    return AsyncValue.loading();
+  }
+
+  Future<void> fetchNextPage() async {
+    if (!_hasMore) return;
+
+    final currentSongs = state.value ?? [];
+    final nextPage = currentSongs.length ~/ 20;
+
+    final token = _authLocalRepository.getToken();
+    final res = await _homeRemoteRepository.fetchAllPlatformSongs(
+      token,
+      20,
+      nextPage * 20,
+      sordOrder: _sortOrder.name
+    );
+
+    switch (res) {
+      case Right(value: final newSongs):
+        if (newSongs.length < 20) {
+          _hasMore = false;
+        }
+        state = AsyncValue.data([...currentSongs, ...newSongs]);
+      case Left(value: final l):
+        state = AsyncValue.error(l.message, StackTrace.current);
+    }
+  }
+
+  Future<void> refresh() async {
+    _hasMore = true;
+    final token = _authLocalRepository.getToken();
+    final res = await _homeRemoteRepository.fetchAllPlatformSongs(token, 20, 0, sordOrder : _sortOrder.name);
+    switch (res) {
+      case Right(value: final newSongs):
+        if (newSongs.length < 20) {
+          _hasMore = false;
+        }
+        state = AsyncValue.data(newSongs);
+      case Left(value: final l):
+        state = AsyncValue.error(l.message, StackTrace.current);
+    }
+    
+  }
+
+  Future<void> changeSortOrder(SongSortOrder order) async {
+    if(_sortOrder == order){
+      return;
+    }
+    _sortOrder = order;
+    await refresh();
   }
 
   Future<void> upload(
-    File song,
-    File thumbnail,
-    String songName,
-    String artistName,
-    String hexCode,
-  ) async {
-    final token = ref.watch(authLocalRepositoryProvider).getToken();
+      File song,
+      File thumbnail,
+      String songName,
+      String artistName,
+      String hexCode,
+      ) async {
+    final token = _authLocalRepository.getToken();
     if (token == null) return;
-    state = AsyncValue.loading();
+    state = const AsyncValue.loading();
     final res = await _homeRemoteRepository.uploadSong(
       song,
       thumbnail,
@@ -75,7 +114,7 @@ class HomeViewmodel extends _$HomeViewmodel {
     );
     switch (res) {
       case Right():
-        state = AsyncValue.data([]);
+        state = const AsyncValue.data([]);
       case Left(value: final l):
         state = AsyncValue.error(l.message, StackTrace.current);
     }
@@ -89,7 +128,7 @@ class HomeViewmodel extends _$HomeViewmodel {
     final currentSong = ref.read(currentSongProvider);
     if (currentSong == null || currentSong is! RemoteSongModel) return;
 
-    final token = ref.read(authLocalRepositoryProvider).getToken();
+    final token = _authLocalRepository.getToken();
     if (token == null) return;
 
     ref

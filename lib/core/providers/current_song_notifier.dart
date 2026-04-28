@@ -39,13 +39,10 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
     updateSong(_playlist[_currentIndex]);
   }
 
-  void updateSong(RemoteSongModel song) async {
+  void updateSong(SongsModel song) async {
     _playerStateSubscription?.cancel();
     await audioPlayer?.dispose();
     audioPlayer = AudioPlayer();
-
-    final index = _playlist.indexOf(song);
-    if (index != -1) _currentIndex = index;
 
     final audioSource = AudioSource.uri(Uri.parse(song.audioPath));
     await audioPlayer!.setAudioSource(audioSource);
@@ -58,9 +55,12 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
       playerState,
     ) {
       if (playerState.processingState == ProcessingState.completed) {
-        nextSong(); // auto-play next
+        audioPlayer?.pause();
+        isPlaying = false;
+        ref.notifyListeners();
       }
     });
+    ref.notifyListeners();
   }
 
   /// Toggles between play and pause states
@@ -85,7 +85,6 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
     );
   }
 
-  /// Updates the favorite status of the current song
   /// [isFavorite] - Whether the song is marked as favorite
   void updateFavoriteStatus(bool isFavorite) {
     final current = state;

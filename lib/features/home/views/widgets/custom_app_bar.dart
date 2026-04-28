@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/current_user_notifier.dart';
-import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:little_music/utilis/greeting_helper.dart';
 import 'package:little_music/utilis/name_helper.dart';
 
@@ -40,30 +39,8 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             children: [
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(40),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-
                   Text(
-                    ' ${getGreeting()}, ${capitalize(currentUser?.lastName ?? "User")}',
+                    ' ${getGreeting()}, ${capitalize(currentUser?.lastName ?? "Listener")}',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

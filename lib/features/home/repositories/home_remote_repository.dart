@@ -53,20 +53,17 @@ class HomeRemoteRepository {
       return Left(AppFailure(message: e.toString()));
     }
   }
-  
 
   Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllUserSongs(
     String token,
   ) async {
     try {
       final url = '${ServerConstants.serverUrl}/api/v1/songs/list';
-      
 
       final response = await http.get(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json', 'x-auth-token': token},
       );
-
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
@@ -83,16 +80,22 @@ class HomeRemoteRepository {
         );
       }
     } catch (e) {
-    
       return Left(AppFailure(message: e.toString()));
     }
   }
 
- Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllPlatformSongs(String? token) async {
+  Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllPlatformSongs(
+    String? token,
+    int limit,
+    int offset,{
+    String sordOrder = 'newewst'
+    }
+  ) async {
     try {
-
       final response = await http.get(
-        Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/platform/all'),
+        Uri.parse(
+          '${ServerConstants.serverUrl}/api/v1/songs/platform/all/$limit/$offset?sort=$sordOrder',
+        ),
         headers: {'Content-Type': 'application/json', 'x-auth-token': ?token},
       );
       if (response.statusCode == 200) {
@@ -106,6 +109,7 @@ class HomeRemoteRepository {
         return Right(res);
       } else {
         final result = jsonDecode(response.body);
+
         return Left(
           AppFailure(message: result['detail'] ?? 'Error fetching songs'),
         );
@@ -116,16 +120,15 @@ class HomeRemoteRepository {
   }
 
   Future<Either<AppFailure, RemoteSongModel>> toggleFavorite(
-      String songId,
-      String token,
-      ) async {
+    String songId,
+    String token,
+  ) async {
     try {
       final response = await http.post(
-        Uri.parse('${ServerConstants.serverUrl}/api/v1/songs/favorites/$songId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token,
-        },
+        Uri.parse(
+          '${ServerConstants.serverUrl}/api/v1/songs/favorites/$songId',
+        ),
+        headers: {'Content-Type': 'application/json', 'x-auth-token': token},
       );
 
       if (response.statusCode == 200) {
@@ -142,7 +145,4 @@ class HomeRemoteRepository {
       return Left(AppFailure(message: e.toString()));
     }
   }
-
-
-
 }

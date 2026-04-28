@@ -41,10 +41,9 @@ class SongCard extends StatelessWidget {
               width: 180,
               child: Text(
                 ' ${capitalize(song.songName)}',
-                style: TextTheme.of(context).bodyMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AColorTheme.inactiveSeekColor,
-                ),
+                style: TextTheme.of(
+                  context,
+                ).bodyMedium!.copyWith(fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -54,9 +53,7 @@ class SongCard extends StatelessWidget {
               width: 180,
               child: Text(
                 song.artistName,
-                style: TextTheme.of(
-                  context,
-                ).bodySmall!.copyWith(color: AColorTheme.subtitleText),
+                style: TextTheme.of(context).bodySmall!.copyWith(),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),

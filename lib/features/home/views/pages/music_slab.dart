@@ -29,23 +29,23 @@ class MusicSlab extends ConsumerWidget {
             },
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              final tween = Tween(
-                begin: const Offset(0, 1),
-                end: Offset.zero,
-              ).chain(CurveTween(curve: Curves.easeIn));
-              final offsetAnimation = animation.drive(tween);
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            },
+                  final tween = Tween(
+                    begin: const Offset(0, 1),
+                    end: Offset.zero,
+                  ).chain(CurveTween(curve: Curves.easeIn));
+                  final offsetAnimation = animation.drive(tween);
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
           ),
         );
       },
       child: Stack(
         children: [
           Container(
-            height: 66,
+            height: 60,
             width: MediaQuery.of(context).size.width - 32,
             decoration: BoxDecoration(
               color: hexToColor(currentSong.hexCode),
@@ -95,7 +95,8 @@ class MusicSlab extends ConsumerWidget {
                               currentSong.displayTitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              style: Theme.of(context).textTheme.bodyMedium!
+                                  .copyWith(
                                     color: AColorTheme.gradient1,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -104,9 +105,8 @@ class MusicSlab extends ConsumerWidget {
                               currentSong.displayArtist,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: AColorTheme.subtitleText,
-                                  ),
+                              style: Theme.of(context).textTheme.bodyMedium!
+                                  .copyWith(color: AColorTheme.subtitleText),
                             ),
                           ],
                         ),
@@ -118,17 +118,23 @@ class MusicSlab extends ConsumerWidget {
                   children: [
                     IconButton(
                       onPressed: () async {
-                        await ref.read(homeViewmodelProvider.notifier).toggleFavorite();
+                        await ref
+                            .read(homeViewmodelProvider.notifier)
+                            .toggleFavorite();
                       },
-                      icon: currentSong.favoriteStatus == true ? const Icon(CupertinoIcons.heart_fill, color: AColorTheme.accent,) : const Icon(
-                        CupertinoIcons.heart,
-                        color: AColorTheme.gradient1,
-                      ),
+                      icon: currentSong.favoriteStatus == true
+                          ? const Icon(
+                              CupertinoIcons.heart_fill,
+                              color: AColorTheme.accent,
+                            )
+                          : const Icon(
+                              CupertinoIcons.heart,
+                              color: AColorTheme.gradient1,
+                            ),
                     ),
                     IconButton(
                       onPressed: () {
                         songNotifier.playAndPause();
-
                       },
                       icon: Icon(
                         songNotifier.isPlaying

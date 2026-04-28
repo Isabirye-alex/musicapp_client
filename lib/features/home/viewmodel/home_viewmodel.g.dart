@@ -48,49 +48,7 @@ final class GetAllSongsProvider
   }
 }
 
-String _$getAllSongsHash() => r'27dd37ca96f98a137cbb9c38d4e4a036a7869594';
-
-@ProviderFor(getAllPlatformSongs)
-const getAllPlatformSongsProvider = GetAllPlatformSongsProvider._();
-
-final class GetAllPlatformSongsProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<RemoteSongModel>>,
-          List<RemoteSongModel>,
-          FutureOr<List<RemoteSongModel>>
-        >
-    with
-        $FutureModifier<List<RemoteSongModel>>,
-        $FutureProvider<List<RemoteSongModel>> {
-  const GetAllPlatformSongsProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'getAllPlatformSongsProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$getAllPlatformSongsHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<RemoteSongModel>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<RemoteSongModel>> create(Ref ref) {
-    return getAllPlatformSongs(ref);
-  }
-}
-
-String _$getAllPlatformSongsHash() =>
-    r'b224f3217e8333d2f2d9738586ce09c171845426';
+String _$getAllSongsHash() => r'031d07064381e2406332cecc002d7192804eb6a8';
 
 @ProviderFor(HomeViewmodel)
 const homeViewmodelProvider = HomeViewmodelProvider._();
@@ -104,7 +62,7 @@ final class HomeViewmodelProvider
         argument: null,
         retry: null,
         name: r'homeViewmodelProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -127,7 +85,7 @@ final class HomeViewmodelProvider
   }
 }
 
-String _$homeViewmodelHash() => r'3074e61cdd8eb38ec08c3198350951889c4939c0';
+String _$homeViewmodelHash() => r'405fdca52a1be269dfba122f8df304db5c459007';
 
 abstract class _$HomeViewmodel
     extends $Notifier<AsyncValue<List<RemoteSongModel>>> {
