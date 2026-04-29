@@ -7,16 +7,32 @@ import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+  
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  }
 
   await JustAudioBackground.init(
     androidNotificationChannelId: 'littletech.com.little_music',
     androidNotificationChannelName: 'Audio Playback',
     androidNotificationOngoing: true,
     androidStopForegroundOnPause: true,
-    
+
   );
 
   final dir = await getApplicationDocumentsDirectory();

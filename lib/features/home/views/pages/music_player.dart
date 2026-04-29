@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
+import 'package:little_music/core/widgets/play_pause_button.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/utilis/color_converter.dart';
 import 'package:little_music/utilis/time_helper.dart';
@@ -177,36 +177,7 @@ class MusicPlayer extends ConsumerWidget {
                           ),
 
                           // Play/Pause — reads from stream
-                          StreamBuilder(
-                            stream: songNotifier.audioPlayer?.playerStateStream,
-                            builder: (context, snapshot) {
-                              final playing = snapshot.data?.playing ?? false;
-                              final completed =
-                                  snapshot.data?.processingState ==
-                                  ProcessingState.completed;
-                              final isActuallyPlaying = playing && !completed;
-                              return GestureDetector(
-                                onTap: songNotifier.playAndPause,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    color: AColorTheme.gradient1,
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      isActuallyPlaying
-                                          ? CupertinoIcons.pause_fill
-                                          : CupertinoIcons.play_arrow_solid,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                          PlayPauseButton(songNotifier: songNotifier),
 
                           // Next
                           GestureDetector(

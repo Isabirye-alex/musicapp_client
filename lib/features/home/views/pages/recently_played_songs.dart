@@ -15,46 +15,41 @@ class RecentlyPlayedSongs extends ConsumerWidget {
 
     return Scaffold(
       appBar: CustomAppBar(),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(8),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 150,
-          mainAxisExtent: 150,
-          childAspectRatio: 3,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-        ),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(12),
         itemCount: recentlyPlayedSongs.length,
+        separatorBuilder: (_, __) => const Divider(height: 1),
         itemBuilder: (context, index) {
           final song = recentlyPlayedSongs[index];
-          return GestureDetector(
-            onTap: () => ref
-                .read(currentSongProvider.notifier)
-                .setPlaylist(recentlyPlayedSongs, startIndex: index),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                image: DecorationImage(
-                  image: NetworkImage(song.thumbnail),
-                  fit: BoxFit.cover,
-                ),
+          return ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 8,
+              horizontal: 12,
+            ),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                song.thumbnail,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.black.withAlpha(120),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  song.songName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+            ),
+            title: Text(
+              song.songName,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              song.artistName,
+              style: TextStyle(color: Colors.grey[600]),
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: GestureDetector(
+              onTap: () => ref
+                  .read(currentSongProvider.notifier)
+                  .setPlaylist(recentlyPlayedSongs, startIndex: index),
+              child: Icon(Icons.play_arrow, color: Colors.blueAccent),
             ),
           );
         },

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
+import 'package:little_music/core/widgets/play_pause_button.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/music_player.dart';
 import 'package:little_music/utilis/color_converter.dart';
@@ -128,29 +128,7 @@ class MusicSlab extends ConsumerWidget {
                           onTap: () => songNotifier.previousSong(),
                           child: const Icon(Icons.skip_previous, size: 30),
                         ),
-                        StreamBuilder(
-                          stream: songNotifier.audioPlayer?.playerStateStream,
-                          builder: (context, snapshot) {
-                            final playing = snapshot.data?.playing ?? false;
-                            final completed =
-                                snapshot.data?.processingState ==
-                                ProcessingState.completed;
-
-                            final isActuallyPlaying = playing && !completed;
-
-                            return IconButton(
-                              onPressed: () {
-                                songNotifier.playAndPause();
-                              },
-                              icon: Icon(
-                                isActuallyPlaying
-                                    ? CupertinoIcons.pause_fill
-                                    : CupertinoIcons.play_fill,
-                                color: AColorTheme.gradient1,
-                              ),
-                            );
-                          },
-                        ),
+                        PlayPauseButton(songNotifier:  songNotifier),
                         GestureDetector(
                           onTap: () => songNotifier.nextSong(),
                           child: const Icon(Icons.skip_next, size: 30),

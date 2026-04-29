@@ -70,7 +70,10 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                   SortChipClass(label: 'Name', order: SongSortOrder.name),
                 ],
               ),
-              Text('Discover', style: TextTheme.of(context).headlineMedium),
+              Text(
+                'Commnity Songs',
+                style: TextTheme.of(context).headlineMedium,
+              ),
               SizedBox(height: 12),
               ref
                   .watch(homeViewmodelProvider)

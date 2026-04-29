@@ -4,6 +4,7 @@ import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/upload_song_page.dart';
 import 'package:little_music/features/home/views/widgets/custom_app_bar.dart';
+import 'package:little_music/features/home/views/widgets/empy_page.dart';
 import 'package:little_music/features/home/views/widgets/reusable_song_card.dart';
 import 'package:little_music/utilis/loader.dart';
 
@@ -12,18 +13,21 @@ class YourUploads extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: CustomAppBar(),
       floatingActionButton: FloatingActionButton.extended(
+        elevation: 4,
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => UploadSongPage()),
         ),
         backgroundColor: AColorTheme.gradient1,
-        icon: Icon(Icons.add_rounded, color: Colors.white),
-        label: Text(
-          'Upload Song',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        icon: const Icon(Icons.add_rounded, color: Colors.white),
+        label: const Text(
+          'Upload',
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
       body: RefreshIndicator(
@@ -33,63 +37,79 @@ class YourUploads extends ConsumerWidget {
           await ref.read(getAllSongsProvider.future);
         },
         child: ListView(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           children: [
-            Text('Your Uploads', style: TextTheme.of(context).headlineMedium),
-            SizedBox(height: 12),
+            // 🔥 Header Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Your Uploads',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Icon(Icons.library_music_rounded, color: Colors.grey.shade400),
+              ],
+            ),
+
+            const SizedBox(height: 6),
+
+            Text(
+              'Manage and play your uploaded songs',
+              style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+            ),
+
+            const SizedBox(height: 16),
+
+            // 🔥 Content
             ref
                 .watch(getAllSongsProvider)
                 .when(
                   data: (data) {
                     if (data.isEmpty) {
-                      return Container(
-                        height: 120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: AColorTheme.gradient1.withAlpha(20),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.upload, size: 36, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text(
-                                'You haven\'t uploaded any songs yet',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
+                      return EmptyState();
                     }
+
                     return GridView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(), // important
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // 2 columns
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 0.75, // adjust for card shape
-                      ),
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 0.72,
+                          ),
                       itemCount: data.length,
                       itemBuilder: (context, index) {
                         final song = data[index];
-                        return SongCard(
-                          song: song,
-                          ref: ref,
-                          playlist: data,
-                          index: index,
-                          key: ValueKey(song.songId),
+
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          child: Material(
+                            elevation: 2,
+                            borderRadius: BorderRadius.circular(16),
+                            child: SongCard(
+                              key: ValueKey(song.songId),
+                              song: song,
+                              ref: ref,
+                              playlist: data,
+                              index: index,
+                            ),
+                          ),
                         );
                       },
                     );
                   },
-                  error: (e, _) => Text(
-                    'Error loading your songs',
-                    style: TextStyle(color: Colors.red[300]),
+                  error: (e, _) => Center(
+                    child: Text(
+                      'Something went wrong',
+                      style: TextStyle(color: Colors.red.shade300),
+                    ),
                   ),
-                  loading: () => Loader(),
+                  loading: () => const Loader(),
                 ),
           ],
         ),
