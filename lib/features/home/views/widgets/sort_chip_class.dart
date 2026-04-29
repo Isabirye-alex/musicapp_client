@@ -12,7 +12,7 @@ class SortChipClass extends ConsumerWidget {
     final currentOrder = ref.read(homeViewmodelProvider.notifier).sortOrder;
     final isSelected = currentOrder == order;
     return FilterChip(label: Text(label), selected: isSelected, onSelected: (_){
-      ref.read(homeViewmodelProvider.notifier).changeSortOrder(order);
+      ref.watch(homeViewmodelProvider.notifier).changeSortOrder(order);
     },);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:just_audio/just_audio.dart';
@@ -44,7 +45,12 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
     await audioPlayer?.dispose();
     audioPlayer = AudioPlayer();
 
-    final audioSource = AudioSource.uri(Uri.parse(song.audioPath));
+    final audioSource = AudioSource.uri(Uri.parse(song.audioPath),tag: MediaItem(
+        id: song.id,
+        title: song.displayTitle,
+        artist: song.displayArtist,
+        artUri: Uri.parse(song.thumbnailUrl),
+      ),);
     await audioPlayer!.setAudioSource(audioSource);
     audioPlayer!.play();
 
@@ -60,7 +66,6 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
         ref.notifyListeners();
       }
     });
-    ref.notifyListeners();
   }
 
   /// Toggles between play and pause states

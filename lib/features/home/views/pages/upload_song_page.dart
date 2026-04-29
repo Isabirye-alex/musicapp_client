@@ -64,14 +64,13 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
     ref.listen(homeViewmodelProvider, (_, data) {
       data.when(
         data: (data) {
+          Navigator.pop(context);
           SuccessHelper.showSuccess(
             context,
             'Song uploaded successfully',
             'Success',
           );
-          Future.delayed(const Duration(milliseconds: 500), () {
-            if (context.mounted) Navigator.pop(context); //
-          });
+
         },
         error: (error, str) {
           ErrorHelper.showError(context, '$error', error.toString());

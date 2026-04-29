@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
-import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:little_music/features/home/repositories/home_local_repository.dart';
 import 'package:little_music/utilis/name_helper.dart';

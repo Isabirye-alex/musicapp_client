@@ -88,13 +88,13 @@ class HomeRemoteRepository {
     String? token,
     int limit,
     int offset,{
-    String sordOrder = 'newewst'
+    String sortOrder = 'newest'
     }
   ) async {
     try {
       final response = await http.get(
         Uri.parse(
-          '${ServerConstants.serverUrl}/api/v1/songs/platform/all/$limit/$offset?sort=$sordOrder',
+          '${ServerConstants.serverUrl}/api/v1/songs/platform/all/$limit/$offset?sort=$sortOrder',
         ),
         headers: {'Content-Type': 'application/json', 'x-auth-token': ?token},
       );

@@ -9,7 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_viewmodel.g.dart';
 
-enum SongSortOrder {neweset, oldest, name}
+enum SongSortOrder { newest, oldest, name }
 
 @Riverpod(keepAlive: true)
 Future<List<RemoteSongModel>> getAllSongs(Ref ref) async {
@@ -32,7 +32,7 @@ class HomeViewmodel extends _$HomeViewmodel {
   late HomeLocalRepository _homeLocalRepository;
   bool _hasMore = true;
   // ignore: prefer_final_fields
-  SongSortOrder _sortOrder = SongSortOrder.neweset;
+  SongSortOrder _sortOrder = SongSortOrder.newest; //default => newest
 
   bool get hasMore => _hasMore;
   SongSortOrder get sortOrder => _sortOrder;
@@ -56,7 +56,7 @@ class HomeViewmodel extends _$HomeViewmodel {
       token,
       20,
       nextPage * 20,
-      sordOrder: _sortOrder.name
+      sortOrder: _sortOrder.name,
     );
 
     switch (res) {
@@ -73,7 +73,12 @@ class HomeViewmodel extends _$HomeViewmodel {
   Future<void> refresh() async {
     _hasMore = true;
     final token = _authLocalRepository.getToken();
-    final res = await _homeRemoteRepository.fetchAllPlatformSongs(token, 20, 0, sordOrder : _sortOrder.name);
+    final res = await _homeRemoteRepository.fetchAllPlatformSongs(
+      token,
+      20,
+      0,
+      sortOrder: _sortOrder.name,
+    );
     switch (res) {
       case Right(value: final newSongs):
         if (newSongs.length < 20) {
@@ -83,11 +88,10 @@ class HomeViewmodel extends _$HomeViewmodel {
       case Left(value: final l):
         state = AsyncValue.error(l.message, StackTrace.current);
     }
-    
   }
 
   Future<void> changeSortOrder(SongSortOrder order) async {
-    if(_sortOrder == order){
+    if (_sortOrder == order) {
       return;
     }
     _sortOrder = order;
@@ -95,12 +99,12 @@ class HomeViewmodel extends _$HomeViewmodel {
   }
 
   Future<void> upload(
-      File song,
-      File thumbnail,
-      String songName,
-      String artistName,
-      String hexCode,
-      ) async {
+    File song,
+    File thumbnail,
+    String songName,
+    String artistName,
+    String hexCode,
+  ) async {
     final token = _authLocalRepository.getToken();
     if (token == null) return;
     state = const AsyncValue.loading();

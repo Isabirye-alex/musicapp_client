@@ -52,7 +52,7 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
     return Scaffold(
       appBar: CustomAppBar(),
       body: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 16),
         child: RefreshIndicator(
           onRefresh: () async {
             await ref.read(homeViewmodelProvider.notifier).refresh();
@@ -63,15 +63,15 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  SortChipClass(label: 'Newest', order: SongSortOrder.neweset),
-                  SizedBox(height: 8),
+                  SortChipClass(label: 'Newest', order: SongSortOrder.newest),
+                  SizedBox(width: 8),
                   SortChipClass(label: 'Oldest', order: SongSortOrder.oldest),
-                  SizedBox(height: 8),
+                  SizedBox(width: 8),
                   SortChipClass(label: 'Name', order: SongSortOrder.name),
                 ],
               ),
               Text('Discover', style: TextTheme.of(context).headlineMedium),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               ref
                   .watch(homeViewmodelProvider)
                   .when(
@@ -84,7 +84,7 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                             borderRadius: BorderRadius.circular(12),
                             color: AColorTheme.gradient1.withAlpha(20),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -110,10 +110,10 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
-                            padding: const EdgeInsets.only(bottom: 10),
-                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.only(bottom: 10),
+                            physics: NeverScrollableScrollPhysics(),
                             gridDelegate:
-                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                                SliverGridDelegateWithMaxCrossAxisExtent(
                                   maxCrossAxisExtent: 200,
                                   mainAxisSpacing: 0,
                                   mainAxisExtent: 250,
@@ -133,12 +133,12 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                                     : SizedBox.shrink();
                               }
                               final song = data[index];
-                              return SongCard(song: song, ref: ref);
+                              return SongCard(key: ValueKey(song.songId), song: song, ref: ref);
                             },
                           ),
                           if (hasMore)
                             SizedBox(
-                              height: 60,
+                              height: 30,
                               child: Center(child: CircularProgressIndicator()),
                             ),
                         ],
@@ -148,7 +148,7 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                       'Error loading discover songs $e',
                       style: TextStyle(color: Colors.red[300]),
                     ),
-                    loading: () => const Loader(),
+                    loading: () => Loader(),
                   ),
             ],
           ),

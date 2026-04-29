@@ -20,7 +20,7 @@ class SuccessHelper {
       message: message,
       dismissDirection: FlushbarDismissDirection.HORIZONTAL,
       shouldIconPulse: true,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 5),
       backgroundColor: AColorTheme.success,
       icon: const Icon(Icons.check_circle, color: Colors.white),
     ).show(context);
