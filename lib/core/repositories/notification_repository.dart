@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:http/http.dart' as http;
+import 'package:little_music/core/constants/server_constants.dart';
 import 'package:little_music/core/failure/failure.dart';
 import 'package:little_music/core/models/notification_payload_model.dart';
 import 'package:little_music/core/models/send_to_token_model.dart';
@@ -35,7 +36,7 @@ class NotificationRepository  {
       );
 
       final response = await http.post(
-        Uri.parse("https://your-api.com/notify/token"),
+        Uri.parse("${ServerConstants.serverUrl}/api/v1/notifications/notify/token"),
         headers: {
           "Content-Type": "application/json",
         },
@@ -44,6 +45,7 @@ class NotificationRepository  {
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
+        print('========================Sucess===================');
         return Right(decoded["message_id"]);
       } else {
         return Left(

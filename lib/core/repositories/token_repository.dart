@@ -15,23 +15,34 @@ TokenRepository tokenRepository(Ref ref) {
 }
 
 class TokenRepository {
-
-
-  Future<Either<AppFailure, TokenModel>> resgiterDeviceToken(String? token, String? platform, String? authToken) async {
+  Future<Either<AppFailure, TokenModel>> resgiterDeviceToken(
+    String? token,
+    String? platform,
+    String? authToken,
+  ) async {
     try {
-      final model = TokenModel(deviceToken: token ?? '', platform: platform ?? '');
+      final model = TokenModel(
+        deviceToken: token ?? '',
+        platform: platform ?? '',
+      );
       final request = await http.post(
-        Uri.parse('${ServerConstants.serverUrl}/api/v1/tokens/fcm/register-token'),
-        headers: {'Content-Type': 'application/json', 'x-auth-token': authToken ?? ''},
+        Uri.parse(
+          '${ServerConstants.serverUrl}/api/v1/tokens/fcm/register-token',
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': authToken ?? '',
+        },
         body: model.toJson(),
       );
       if (request.statusCode != 200) {
-      
-        return Left(AppFailure(message: 'Failed to register token: ${request.body}'));
+        return Left(
+          AppFailure(message: 'Failed to register token: ${request.body}'),
+        );
       }
       final responseData = request.body;
       final decoded = jsonDecode(responseData);
-      print(decoded);
+      print('========================Sucess===================');
       return Right(decoded['success']);
     } catch (e) {
       return Left(AppFailure(message: e.toString()));

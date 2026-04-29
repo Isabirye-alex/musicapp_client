@@ -13,7 +13,7 @@ class TokenRegisterViewmodel extends _$TokenRegisterViewmodel {
   @override
   AsyncValue<TokenModel?> build() {
     _tokenRepository = ref.watch(tokenRepositoryProvider);
-_authLocalRepository = ref.read(authLocalRepositoryProvider);
+  _authLocalRepository = ref.read(authLocalRepositoryProvider);
     return const AsyncValue.data(null);
   }
 
