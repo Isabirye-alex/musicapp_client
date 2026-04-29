@@ -27,8 +27,6 @@ void main() async {
  
   }
 
-  String? token = await FirebaseMessaging.instance.getToken();
-  
 
   await JustAudioBackground.init(
     androidNotificationChannelId: 'littletech.com.little_music',

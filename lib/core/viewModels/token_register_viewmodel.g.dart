@@ -13,14 +13,14 @@ part of 'token_register_viewmodel.dart';
 const tokenRegisterViewmodelProvider = TokenRegisterViewmodelProvider._();
 
 final class TokenRegisterViewmodelProvider
-    extends $NotifierProvider<TokenRegisterViewmodel, AsyncValue<TokenModel?>> {
+    extends $NotifierProvider<TokenRegisterViewmodel, AsyncValue<bool>> {
   const TokenRegisterViewmodelProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'tokenRegisterViewmodelProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -33,31 +33,29 @@ final class TokenRegisterViewmodelProvider
   TokenRegisterViewmodel create() => TokenRegisterViewmodel();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<TokenModel?> value) {
+  Override overrideWithValue(AsyncValue<bool> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<TokenModel?>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<bool>>(value),
     );
   }
 }
 
 String _$tokenRegisterViewmodelHash() =>
-    r'0d61bdbd02a2824658d1c595149f7d22d1706e31';
+    r'afbb66c5df5db90b31d551fefbd5db643c6b7b7b';
 
-abstract class _$TokenRegisterViewmodel
-    extends $Notifier<AsyncValue<TokenModel?>> {
-  AsyncValue<TokenModel?> build();
+abstract class _$TokenRegisterViewmodel extends $Notifier<AsyncValue<bool>> {
+  AsyncValue<bool> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref =
-        this.ref as $Ref<AsyncValue<TokenModel?>, AsyncValue<TokenModel?>>;
+    final ref = this.ref as $Ref<AsyncValue<bool>, AsyncValue<bool>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<TokenModel?>, AsyncValue<TokenModel?>>,
-              AsyncValue<TokenModel?>,
+              AnyNotifier<AsyncValue<bool>, AsyncValue<bool>>,
+              AsyncValue<bool>,
               Object?,
               Object?
             >;

@@ -15,16 +15,14 @@ TokenRepository tokenRepository(Ref ref) {
 }
 
 class TokenRepository {
-  Future<Either<AppFailure, TokenModel>> resgiterDeviceToken(
-    String? token,
-    String? platform,
+  Future<Either<AppFailure, bool>> registerDeviceToken(
+    String token,
+    String platform,
     String? authToken,
   ) async {
     try {
-      final model = TokenModel(
-        deviceToken: token ?? '',
-        platform: platform ?? '',
-      );
+      final model = TokenModel(token: token, platform: platform);
+
       final request = await http.post(
         Uri.parse(
           '${ServerConstants.serverUrl}/api/v1/tokens/fcm/register-token',
@@ -33,17 +31,16 @@ class TokenRepository {
           'Content-Type': 'application/json',
           'x-auth-token': authToken ?? '',
         },
-        body: model.toJson(),
+        body: jsonEncode(model.toJson()),
       );
+
       if (request.statusCode != 200) {
-        return Left(
-          AppFailure(message: 'Failed to register token: ${request.body}'),
-        );
+        return Left(AppFailure(message: request.body));
       }
-      final responseData = request.body;
-      final decoded = jsonDecode(responseData);
-      print('========================Sucess===================');
-      return Right(decoded['success']);
+
+      final decoded = jsonDecode(request.body);
+
+      return Right(decoded['success'] ?? false);
     } catch (e) {
       return Left(AppFailure(message: e.toString()));
     }

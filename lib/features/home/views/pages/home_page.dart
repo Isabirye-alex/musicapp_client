@@ -20,18 +20,20 @@ class _HomePageState extends ConsumerState<HomePage> {
   int selectedIndex = 0;
 
   @override
-void initState() {
-  super.initState();
-  _registerToken();
-}
+  void initState() {
+    super.initState();
+    _registerToken();
+  }
 
-Future<void> _registerToken() async {
-  final fcmToken = await FirebaseMessaging.instance.getToken();
+  Future<void> _registerToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+   
+    if (token == null) return;
 
-  if (fcmToken == null) return;
-
-  await ref.read(tokenRegisterViewmodelProvider.notifier).registerToken(fcmToken, 'Android');
-}
+    await ref
+        .read(tokenRegisterViewmodelProvider.notifier)
+        .registerToken(token, 'Android');
+  }
 
   @override
   Widget build(BuildContext context) {

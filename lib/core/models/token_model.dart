@@ -1,23 +1,17 @@
 class TokenModel {
-  final String deviceToken;
-  final String platform; 
+  final String token;
+  final String platform;
 
- const TokenModel({
-    required this.deviceToken,
-    required this.platform,
-  });
+  const TokenModel({required this.token, required this.platform});
 
   Map<String, dynamic> toJson() {
-    return {
-      "device_token": deviceToken,
-      "platform": platform,
-    };
+    return {"token": token, "platform": platform};
   }
 
   factory TokenModel.fromJson(Map<String, dynamic> json) {
     return TokenModel(
-      deviceToken: json["device_token"] ?? '',
+      token: json["token"] ?? '',
       platform: json["platform"] ?? 'unknown',
     );
-  } 
+  }
 }
