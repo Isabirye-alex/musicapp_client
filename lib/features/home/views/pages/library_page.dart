@@ -31,7 +31,7 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
     _scrollController.addListener(() {
       final atBottom =
           _scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 50;
+          _scrollController.position.maxScrollExtent - 200;
       if (atBottom) {
         final isLoading = ref.read(homeViewmodelProvider).isLoading;
         if (!isLoading) {
@@ -133,12 +133,18 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                                     : SizedBox.shrink();
                               }
                               final song = data[index];
-                              return SongCard(key: ValueKey(song.songId), song: song, ref: ref);
+                              return SongCard(
+                                key: ValueKey(song.songId),
+                                song: song,
+                                ref: ref,
+                                playlist: data,
+                                index: index,
+                              );
                             },
                           ),
                           if (hasMore)
                             SizedBox(
-                              height: 30,
+                              height: 40,
                               child: Center(child: CircularProgressIndicator()),
                             ),
                         ],

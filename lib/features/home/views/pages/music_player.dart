@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
@@ -14,14 +15,15 @@ class MusicPlayer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentSong = ref.watch(currentSongProvider);
     final songNotifier = ref.watch(currentSongProvider.notifier);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           colors: [
             hexToColor(currentSong!.hexCode),
-            Color(0xff121212),
-            Color(0xff009999),
+            const Color(0xff121212),
+            const Color(0xff009999),
           ],
         ),
       ),
@@ -29,7 +31,7 @@ class MusicPlayer extends ConsumerWidget {
         backgroundColor: AColorTheme.transparentColor,
         appBar: AppBar(backgroundColor: AColorTheme.transparentColor),
         body: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
               Expanded(
@@ -38,20 +40,18 @@ class MusicPlayer extends ConsumerWidget {
                   tag: 'music-image',
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       image: DecorationImage(
                         image: NetworkImage(currentSong.thumbnailUrl),
-
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
               ),
-
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Expanded(
                 flex: 4,
                 child: Column(
@@ -60,6 +60,7 @@ class MusicPlayer extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               currentSong.displayTitle,
@@ -78,7 +79,7 @@ class MusicPlayer extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        Expanded(child: SizedBox()),
+                        const Expanded(child: SizedBox()),
                         IconButton(
                           onPressed: () async {
                             await ref
@@ -100,19 +101,17 @@ class MusicPlayer extends ConsumerWidget {
                       ],
                     ),
 
+                    // ── Seek bar ──
                     Expanded(
                       child: StreamBuilder(
                         stream: songNotifier.audioPlayer?.positionStream,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const SizedBox();
-                          }
-
                           final position = snapshot.data ?? Duration.zero;
-                          final duration = songNotifier.audioPlayer?.duration;
+                          final duration =
+                              songNotifier.audioPlayer?.duration ??
+                              Duration.zero;
                           double sliderValue = 0.0;
-                          if (duration!.inMilliseconds > 0) {
+                          if (duration.inMilliseconds > 0) {
                             sliderValue =
                                 (position.inMilliseconds /
                                         duration.inMilliseconds)
@@ -132,9 +131,7 @@ class MusicPlayer extends ConsumerWidget {
                                   value: sliderValue,
                                   min: 0,
                                   max: 1,
-                                  onChanged: (value) {
-                                    sliderValue = value;
-                                  },
+                                  onChanged: (_) {},
                                   onChangeEnd: songNotifier.seek,
                                 ),
                               ),
@@ -165,58 +162,67 @@ class MusicPlayer extends ConsumerWidget {
                         },
                       ),
                     ),
+
+                    // ── Controls ──
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(CupertinoIcons.shuffle, size: 30),
+                          const Icon(CupertinoIcons.shuffle, size: 30),
 
+                          // Previous
                           GestureDetector(
-                            onTap: () {
-                              songNotifier.previousSong();
+                            onTap: () => songNotifier.previousSong(),
+                            child: const Icon(Icons.skip_previous, size: 30),
+                          ),
+
+                          // Play/Pause — reads from stream
+                          StreamBuilder(
+                            stream: songNotifier.audioPlayer?.playerStateStream,
+                            builder: (context, snapshot) {
+                              final playing = snapshot.data?.playing ?? false;
+                              final completed =
+                                  snapshot.data?.processingState ==
+                                  ProcessingState.completed;
+                              final isActuallyPlaying = playing && !completed;
+                              return GestureDetector(
+                                onTap: songNotifier.playAndPause,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    color: AColorTheme.gradient1,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      isActuallyPlaying
+                                          ? CupertinoIcons.pause_fill
+                                          : CupertinoIcons.play_arrow_solid,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
-                            child: Icon(
-                              CupertinoIcons.backward_end_alt,
-                              size: 30,
-                            ),
                           ),
-                          GestureDetector(
-                            onTap: songNotifier.playAndPause,
-                            child: Container(
-                              padding: EdgeInsets.all(2),
 
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                color: AColorTheme.gradient1,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Center(
-                                child: songNotifier.isPlaying
-                                    ? Icon(CupertinoIcons.pause_fill)
-                                    : Icon(
-                                        CupertinoIcons.play_arrow_solid,
-                                        size: 30,
-                                      ),
-                              ),
-                            ),
-                          ),
+                          // Next
                           GestureDetector(
-                            onTap: songNotifier.nextSong,
-                            child: Icon(
-                              CupertinoIcons.forward_end_alt,
-                              size: 30,
-                            ),
+                            onTap: () => songNotifier.nextSong(),
+                            child: const Icon(Icons.skip_next, size: 30),
                           ),
-                          Icon(CupertinoIcons.loop, size: 30),
+
+                          const Icon(CupertinoIcons.loop, size: 30),
                         ],
                       ),
                     ),
-                    // Expanded(child: SizedBox()),
+
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                        children: const [
                           Icon(CupertinoIcons.dot_radiowaves_left_right),
                           Icon(CupertinoIcons.list_number_rtl),
                         ],

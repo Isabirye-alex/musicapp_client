@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
-import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/music_player.dart';
 import 'package:little_music/utilis/color_converter.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 
 class MusicSlab extends ConsumerWidget {
   const MusicSlab({super.key});
@@ -68,21 +67,12 @@ class MusicSlab extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           clipBehavior: Clip.hardEdge,
-                          child: currentSong is LocalSongModel
-                              ? QueryArtworkWidget(
-                                  id: int.parse(currentSong.id),
-                                  type: ArtworkType.AUDIO,
-                                  nullArtworkWidget: const Icon(
-                                    CupertinoIcons.music_note,
-                                    color: AColorTheme.gradient1,
-                                  ),
-                                )
-                              : Image.network(
-                                  currentSong.thumbnailUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(CupertinoIcons.music_note),
-                                ),
+                          child: Image.network(
+                            currentSong.thumbnailUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(CupertinoIcons.music_note),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -132,16 +122,41 @@ class MusicSlab extends ConsumerWidget {
                               color: AColorTheme.gradient1,
                             ),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        songNotifier.playAndPause();
-                      },
-                      icon: Icon(
-                        songNotifier.isPlaying
-                            ? CupertinoIcons.pause_fill
-                            : CupertinoIcons.play_fill,
-                        color: AColorTheme.gradient1,
-                      ),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => songNotifier.previousSong(),
+                          child: const Icon(Icons.skip_previous, size: 30),
+                        ),
+                        StreamBuilder(
+                          stream: songNotifier.audioPlayer?.playerStateStream,
+                          builder: (context, snapshot) {
+                            final playing = snapshot.data?.playing ?? false;
+                            final completed =
+                                snapshot.data?.processingState ==
+                                ProcessingState.completed;
+
+                            final isActuallyPlaying = playing && !completed;
+
+                            return IconButton(
+                              onPressed: () {
+                                songNotifier.playAndPause();
+                              },
+                              icon: Icon(
+                                isActuallyPlaying
+                                    ? CupertinoIcons.pause_fill
+                                    : CupertinoIcons.play_fill,
+                                color: AColorTheme.gradient1,
+                              ),
+                            );
+                          },
+                        ),
+                        GestureDetector(
+                          onTap: () => songNotifier.nextSong(),
+                          child: const Icon(Icons.skip_next, size: 30),
+                        ),
+                        SizedBox(width: 12),
+                      ],
                     ),
                   ],
                 ),

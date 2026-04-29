@@ -14,7 +14,7 @@ class RecentlyPlayedSongs extends ConsumerWidget {
         .getRecentlyPlayedSongs();
 
     return Scaffold(
-      appBar:  CustomAppBar(),
+      appBar: CustomAppBar(),
       body: GridView.builder(
         padding: const EdgeInsets.all(8),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -28,8 +28,9 @@ class RecentlyPlayedSongs extends ConsumerWidget {
         itemBuilder: (context, index) {
           final song = recentlyPlayedSongs[index];
           return GestureDetector(
-            onTap: () =>
-                ref.read(currentSongProvider.notifier).updateSong(song),
+            onTap: () => ref
+                .read(currentSongProvider.notifier)
+                .setPlaylist(recentlyPlayedSongs, startIndex: index),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
@@ -61,4 +62,3 @@ class RecentlyPlayedSongs extends ConsumerWidget {
     );
   }
 }
-

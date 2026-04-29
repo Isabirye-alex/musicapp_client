@@ -1,7 +1,5 @@
 // ignore_for_file: unused_local_variable
 
-import 'package:on_audio_query/on_audio_query.dart';
-
 //Sealed union
 
 sealed class SongsModel {
@@ -153,33 +151,6 @@ class LocalSongModel extends SongsModel {
     this.fileSize,
   });
 
-  factory LocalSongModel.fromAudioQuery(SongModel song) {
-    return LocalSongModel(
-      id: song.id.toString(),
-      title: song.title,
-      artist: song.artist ?? 'Unknown Artist',
-      album: song.album ?? 'Unknown Album',
-      path: song.uri ?? '',
-      duration: song.duration ?? 0,
-      albumId: song.albumId,
-      dateAdded: song.dateAdded,
-      fileSize: song.size,
-    );
-  }
-
-  factory LocalSongModel.fromQuery(dynamic song) {
-    return LocalSongModel(
-      id: song.id.toString(),
-      title: song.title ?? 'Unknown Title',
-      artist: song.artist ?? 'Unknown Artist',
-      album: song.album ?? 'Unknown Album',
-      path: song.uri ?? '',
-      duration: song.duration ?? 0,
-      albumId: song.albumId,
-      dateAdded: song.dateAdded,
-      fileSize: song.size,
-    );
-  }
 
   Map<String, dynamic> toJson() => {
     'id': id,

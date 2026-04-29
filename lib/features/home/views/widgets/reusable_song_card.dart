@@ -8,14 +8,18 @@ import 'package:little_music/utilis/name_helper.dart';
 class SongCard extends StatelessWidget {
   final RemoteSongModel song;
   final WidgetRef ref;
-
-  const SongCard({super.key, required this.song, required this.ref});
+   final List<RemoteSongModel> playlist;
+   final int index; 
+  const SongCard({super.key, required this.song, required this.ref, required this.playlist, required this.index});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        ref.read(currentSongProvider.notifier).updateSong(song);
+        ref.read(currentSongProvider.notifier).setPlaylist(
+          playlist,
+          startIndex: index, //start from tapped song
+        );
         ref.watch(homeLocalRepositoryProvider).uploadLocalSongs(song);
       },
       child: Padding(

@@ -150,10 +150,8 @@ class HomeViewmodel extends _$HomeViewmodel {
             .read(currentSongProvider.notifier)
             .updateFavoriteStatus(currentSong.isFavorite);
         state = AsyncValue.error(l.message, StackTrace.current);
-      case Right(value: final r):
-        ref
-            .read(currentSongProvider.notifier)
-            .updateFavoriteStatus(r.isFavorite);
+      case Right(value: final isFavorite):
+        ref.read(currentSongProvider.notifier).updateFavoriteStatus(isFavorite);
     }
   }
 }

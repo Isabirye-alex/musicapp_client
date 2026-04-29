@@ -11,31 +11,23 @@ import 'package:just_audio_background/just_audio_background.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.yourapp.audio',
-      androidNotificationChannelName: 'Audio Playback',
-      androidNotificationOngoing: true,
-      androidStopForegroundOnPause: true,
-    );
-  } catch (e) {
-    // Log error but continue - audio playback will still work without background service
-    debugPrint('JustAudioBackground initialization failed: $e');
-  }
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'littletech.com.little_music',
+    androidNotificationChannelName: 'Audio Playback',
+    androidNotificationOngoing: true,
+    androidStopForegroundOnPause: true,
+    
+  );
 
   final dir = await getApplicationDocumentsDirectory();
-
   Hive.init(dir.path);
-
   await Hive.openBox('songs_box');
 
   final container = ProviderContainer();
-
   final userNotifier = container.read(authViewmodelProvider.notifier);
   await userNotifier.initSharedPreferences();
   await userNotifier.getData();
 
-  // Run the app with the provider scope
   runApp(UncontrolledProviderScope(container: container, child: MyApp()));
 }
 
