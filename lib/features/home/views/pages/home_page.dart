@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:little_music/core/viewModels/token_register_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/library_page.dart';
 import 'package:little_music/features/home/views/pages/music_slab.dart';
 import 'package:little_music/features/home/views/pages/profile_page.dart';
@@ -16,6 +18,21 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   int selectedIndex = 0;
+
+  @override
+void initState() {
+  super.initState();
+  _registerToken();
+}
+
+Future<void> _registerToken() async {
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+
+  if (fcmToken == null) return;
+
+  await ref.read(tokenRegisterViewmodelProvider.notifier).registerToken(fcmToken, 'Android');
+}
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [

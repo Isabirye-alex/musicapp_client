@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "900091830031",
+    "project_id": "musicapp-7aabf",
+    "storage_bucket": "musicapp-7aabf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900091830031:android:8cc662ca7868f18831287a",
+        "android_client_info": {
+          "package_name": "littletech.com.little_music"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxm1ram1zZ_tUFSuKUo_IPCjnEYdtpEZ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

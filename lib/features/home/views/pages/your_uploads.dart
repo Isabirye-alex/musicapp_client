@@ -4,7 +4,7 @@ import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/upload_song_page.dart';
 import 'package:little_music/features/home/views/widgets/custom_app_bar.dart';
-import 'package:little_music/features/home/views/widgets/empy_page.dart';
+import 'package:little_music/features/home/views/widgets/empy_upload_page.dart';
 import 'package:little_music/features/home/views/widgets/reusable_song_card.dart';
 import 'package:little_music/utilis/loader.dart';
 
@@ -39,7 +39,7 @@ class YourUploads extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           children: [
-            // 🔥 Header Section
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -62,7 +62,7 @@ class YourUploads extends ConsumerWidget {
 
             const SizedBox(height: 16),
 
-            // 🔥 Content
+            
             ref
                 .watch(getAllSongsProvider)
                 .when(

@@ -126,13 +126,38 @@ class MusicSlab extends ConsumerWidget {
                       children: [
                         GestureDetector(
                           onTap: () => songNotifier.previousSong(),
-                          child: const Icon(Icons.skip_previous, size: 30),
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: AColorTheme.gradient1,
+                            ),
+                            child: Center(
+                              child: Icon(Icons.skip_previous, size: 20),
+                            ),
+                          ),
                         ),
-                        PlayPauseButton(songNotifier:  songNotifier),
+                        SizedBox(width: 12),
+                        PlayPauseButton(songNotifier: songNotifier),
+                        SizedBox(width: 12),
                         GestureDetector(
                           onTap: () => songNotifier.nextSong(),
-                          child: const Icon(Icons.skip_next, size: 30),
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: AColorTheme.gradient1,
+                            ),
+                            child: Center(
+                              child: Icon(Icons.skip_next, size: 20),
+                            ),
+                          ),
                         ),
+
                         SizedBox(width: 12),
                       ],
                     ),
