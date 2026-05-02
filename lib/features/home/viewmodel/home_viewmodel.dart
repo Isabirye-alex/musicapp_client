@@ -32,7 +32,7 @@ class HomeViewmodel extends _$HomeViewmodel {
   late HomeLocalRepository _homeLocalRepository;
   bool _hasMore = true;
   // ignore: prefer_final_fields
-  SongSortOrder _sortOrder = SongSortOrder.newest; //default => newest
+  SongSortOrder _sortOrder = SongSortOrder.oldest; //default => oldest
 
   bool get hasMore => _hasMore;
   SongSortOrder get sortOrder => _sortOrder;
@@ -118,7 +118,7 @@ class HomeViewmodel extends _$HomeViewmodel {
     );
     switch (res) {
       case Right():
-        state = const AsyncValue.data([]);
+        await refresh();
       case Left(value: final l):
         state = AsyncValue.error(l.message, StackTrace.current);
     }

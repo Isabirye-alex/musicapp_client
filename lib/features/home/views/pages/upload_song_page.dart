@@ -70,7 +70,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
             'Song uploaded successfully',
             'Success',
           );
-
+          ref.invalidate(getAllSongsProvider);
         },
         error: (error, str) {
           ErrorHelper.showError(context, '$error', error.toString());
