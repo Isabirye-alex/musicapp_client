@@ -47,7 +47,7 @@ final class AuthViewmodelProvider
   }
 }
 
-String _$authViewmodelHash() => r'100e181953990a71addd3ecc62a277ee726ea6c9';
+String _$authViewmodelHash() => r'dd9dc792e5c8f48729180421e69aa02190219f50';
 
 /// Riverpod notifier for authentication state management
 /// Handles signup, signin, and session persistence

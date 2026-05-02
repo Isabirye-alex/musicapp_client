@@ -148,4 +148,27 @@ class AuthRemoteRepository {
       return false;
     }
   }
+
+  // Googl signin and other social auth methods can be added here in the future
+ Future<Either<AppFailure, UserModel>> googleSignIn(String idToken) async {
+  try {
+    final response = await http.post(
+      Uri.parse('${ServerConstants.serverUrl}/api/v1/auth/google'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'token': idToken}),
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      final token = data['access_token'] as String;
+      final userResult = await getCurrentUser(token);
+      return userResult;
+    } else {
+      return Left(AppFailure(message: data['detail'] ?? 'Google sign-in failed'));
+    }
+  } catch (e) {
+    return Left(AppFailure(message: e.toString()));
+  }
+}
 }

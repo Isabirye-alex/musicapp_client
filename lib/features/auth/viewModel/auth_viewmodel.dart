@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart' hide State;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/features/auth/model/user_model.dart';
 import 'package:little_music/features/auth/repositories/auth_local_repository.dart';
@@ -39,7 +40,7 @@ class AuthViewmodel extends _$AuthViewmodel {
     final res = await _authRemoteRepository.signup(
       firstName,
       lastName,
-      email, 
+      email,
       password,
     );
 
@@ -59,7 +60,6 @@ class AuthViewmodel extends _$AuthViewmodel {
     state = AsyncValue.loading();
     final res = await _authRemoteRepository.signIn(email, password);
 
-    // Handle Either type result from repository
     final val = switch (res) {
       Right(value: final r) => state = _logInSuccess(r),
       Left(value: final l) => state = AsyncValue.error(
@@ -124,6 +124,37 @@ class AuthViewmodel extends _$AuthViewmodel {
         state = AsyncValue.data(r);
       case Left(value: final l):
         state = AsyncValue.error(l.message, StackTrace.current);
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    state = const AsyncValue.loading();
+    try {
+      final googleSignIn = GoogleSignIn.instance;
+      await googleSignIn.initialize();
+      final account = await googleSignIn.authenticate(
+        scopeHint: ['email', 'profile'],
+      );
+
+      // ignore: await_only_futures
+      final auth = await account.authentication;
+      final idToken = auth.idToken;
+
+      if (idToken == null) {
+        state = AsyncValue.error('Could not get ID token', StackTrace.current);
+        return;
+      }
+
+      final res = await _authRemoteRepository.googleSignIn(idToken);
+
+      switch (res) {
+        case Right(value: final r):
+          state = _logInSuccess(r);
+        case Left(value: final l):
+          state = AsyncValue.error(l.message, StackTrace.current);
+      }
+    } catch (e) {
+      state = AsyncValue.error(e.toString(), StackTrace.current);
     }
   }
 }

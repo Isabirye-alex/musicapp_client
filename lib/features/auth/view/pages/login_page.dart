@@ -64,7 +64,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
 
     return Scaffold(
-      // appBar: AppBar(),
       body: isLoading
           ? Loader()
           : Padding(
@@ -115,6 +114,50 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       },
                       text: 'Log In',
                     ),
+                    SizedBox(height: 12),
+
+                    // --- Divider ---
+                    Row(
+                      children: [
+                        Expanded(child: Divider()),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            'or',
+                            style: TextTheme.of(context).bodyMedium,
+                          ),
+                        ),
+                        Expanded(child: Divider()),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+
+                    // --- Google Sign-In Button ---
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          ref
+                              .read(authViewmodelProvider.notifier)
+                              .signInWithGoogle();
+                        },
+                        icon: Image.asset(
+                          'assets/google_logo.png',
+                          height: 22,
+                          width: 22,
+                        ),
+                        label: Text('Continue with Google'),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                          side: BorderSide(color: AColorTheme.gradient3),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+
                     RichText(
                       text: TextSpan(
                         text: 'Don\'t have an account? ',
@@ -130,7 +173,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   (_) => false,
                                 );
                               },
-
                             text: 'Sign up here',
                             style: TextStyle(
                               color: AColorTheme.gradient3,
