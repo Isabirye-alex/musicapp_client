@@ -130,15 +130,16 @@ class AuthViewmodel extends _$AuthViewmodel {
   Future<void> signInWithGoogle() async {
     state = const AsyncValue.loading();
     try {
-      final googleSignIn = GoogleSignIn.instance;
-      await googleSignIn.initialize();
-      final account = await googleSignIn.authenticate(
+      await GoogleSignIn.instance.initialize(
+        serverClientId:
+            '1092902676236-4u9pkisorpfv95drcrhqii9rgr1lq7rj.apps.googleusercontent.com',
+      );
+
+      final account = await GoogleSignIn.instance.authenticate(
         scopeHint: ['email', 'profile'],
       );
 
-      // ignore: await_only_futures
-      final auth = await account.authentication;
-      final idToken = auth.idToken;
+      final idToken = account.authentication.idToken;
 
       if (idToken == null) {
         state = AsyncValue.error('Could not get ID token', StackTrace.current);

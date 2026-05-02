@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:little_music/utilis/error.dart';
@@ -97,7 +98,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       controller: passwordController,
                       hintText: 'Password',
                       prefixIcon: Icons.password_outlined,
-                      suffixIcon: Icons.remove_red_eye_sharp,
+                      suffixIcon: isObscureText
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       isObscureText: isObscureText,
                     ),
                     SizedBox(height: 20),
@@ -142,7 +145,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               .signInWithGoogle();
                         },
                         icon: Image.asset(
-                          'assets/google_logo.png',
+                          'assets/images/google_logo.png',
                           height: 22,
                           width: 22,
                         ),

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:little_music/core/providers/network_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/features/home/views/widgets/custom_app_bar.dart';
@@ -49,6 +50,12 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(networkProvider, (previous, isConnected) {
+      final wasDisconnected = previous == false;
+      if (isConnected && wasDisconnected) {
+        ref.read(homeViewmodelProvider.notifier).refresh();
+      }
+    });
     return Scaffold(
       appBar: CustomAppBar(),
       body: Padding(

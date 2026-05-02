@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:little_music/core/theme/a_app_theme.dart';
+import 'package:little_music/core/widgets/network_wrapper.dart';
 import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/home_page.dart';
 import 'package:path_provider/path_provider.dart';
@@ -58,7 +59,7 @@ class MyApp extends ConsumerWidget {
       theme: AAppTheme.lightTheme,
       darkTheme: AAppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: NetworkAwareWrapper(child: HomePage()),
     );
   }
 }
