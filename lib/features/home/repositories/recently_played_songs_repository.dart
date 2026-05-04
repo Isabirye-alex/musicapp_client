@@ -31,11 +31,11 @@ class RecentlyPlayedSongsRepository {
         },
       );
 
-      if (request.statusCode == 200) {
+      if (request.statusCode == 201) {
         final result = jsonDecode(request.body);
 
         // Parse the response to RemoteSongModel
-        final song = RemoteSongModel.fromJson(result);
+        final song = RemoteSongModel.fromJson(result as Map<String, dynamic>);
         return Right(song);
       } else {
         final result = jsonDecode(request.body);
@@ -55,7 +55,7 @@ class RecentlyPlayedSongsRepository {
   ) async {
     try {
       final String url =
-          '${ServerConstants.serverUrl}/api/v1/songs/recent/page/?limit=$limit&&offset=$offset';
+          '${ServerConstants.serverUrl}/api/v1/songs/recent/page/?limit=$limit&offset=$offset';
       final request = await http.get(
         Uri.parse(url),
         headers: {
@@ -64,10 +64,12 @@ class RecentlyPlayedSongsRepository {
         },
       );
 
-      if (request.statusCode == 201) {
+      if (request.statusCode == 200) {
         final response = jsonDecode(request.body) as List<dynamic>;
-        final songs = response
-            .map((e) => RemoteSongModel.fromJson(e as Map<String, dynamic>))
+        final List<RemoteSongModel> songs = response
+            .map<RemoteSongModel>(
+              (s) => RemoteSongModel.fromJson(s as Map<String, dynamic>),
+            )
             .toList();
         return Right(songs);
       } else {

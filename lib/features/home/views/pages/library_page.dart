@@ -35,7 +35,9 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
           _scrollController.position.maxScrollExtent - 200;
       if (atBottom) {
         final isConnected = ref.read(networkProvider);
-        if(!isConnected){return;}
+        if (!isConnected) {
+          return;
+        }
         final isLoading = ref.read(homeViewmodelProvider).isLoading;
         if (!isLoading) {
           ref.read(homeViewmodelProvider.notifier).fetchNextPage();
@@ -89,89 +91,107 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                   .watch(homeViewmodelProvider)
                   .when(
                     skipLoadingOnReload: true,
-                data: (data) {
-                  if (data.isEmpty) {
-                    return Container(
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: AColorTheme.gradient1.withAlpha(20),
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.explore, size: 36, color: Colors.grey),
-                            SizedBox(height: 8),
-                            Text(
-                              'No songs from other users yet',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-
-                  final isConnected = ref.watch(networkProvider); // ← watch network
-                  final hasMore = ref.watch(homeViewmodelProvider.notifier).hasMore;
-             
-
-                  return Column(
-                    children: [
-                      // offline banner
-                      if (!isConnected)
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                          margin: EdgeInsets.only(bottom: 8),
+                    data: (data) {
+                      if (data.isEmpty) {
+                        return Container(
+                          height: 120,
                           decoration: BoxDecoration(
-                            color: Colors.orange.shade800,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
+                            color: AColorTheme.gradient1.withAlpha(20),
                           ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.offline_bolt, color: Colors.white, size: 16),
-                              SizedBox(width: 8),
-                              Text(
-                                'Showing cached content',
-                                style: TextStyle(color: Colors.white, fontSize: 13),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.explore,
+                                  size: 36,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'No songs from other users yet',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      final isConnected = ref.watch(
+                        networkProvider,
+                      ); // ← watch network
+                      final hasMore = ref
+                          .watch(homeViewmodelProvider.notifier)
+                          .hasMore;
+
+                      return Column(
+                        children: [
+                          // offline banner
+                          if (!isConnected)
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(
+                                vertical: 6,
+                                horizontal: 12,
                               ),
-                            ],
+                              margin: EdgeInsets.only(bottom: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.shade800,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.offline_bolt,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Showing cached content',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.only(bottom: 10),
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 200,
+                                  mainAxisSpacing: 2,
+                                  mainAxisExtent: 240,
+                                  crossAxisSpacing: 12,
+                                ),
+                            scrollDirection: Axis.vertical,
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              final song = data[index];
+                              return SongCard(
+                                key: ValueKey(song.songId),
+                                song: song,
+                                ref: ref,
+                                playlist: data,
+                                index: index,
+                              );
+                            },
                           ),
-                        ),
-                      GridView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.only(bottom: 10),
-                        physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          mainAxisSpacing: 0,
-                          mainAxisExtent: 250,
-                          crossAxisSpacing: 2,
-                        ),
-                        scrollDirection: Axis.vertical,
-                        itemCount: data.length,
-                        itemBuilder: (context, index) {
-                          final song = data[index];
-                          return SongCard(
-                            key: ValueKey(song.songId),
-                            song: song,
-                            ref: ref,
-                            playlist: data,
-                            index: index,
-                          );
-                        },
-                      ),
-                      // ← only show loader if online AND has more pages AND currently loading
-                      if (hasMore && isConnected )
-                        SizedBox(
-                          height: 40,
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
-                    ],
-                  );
-                },
+                          // ← only show loader if online AND has more pages AND currently loading
+                          if (hasMore && isConnected)
+                            SizedBox(
+                              height: 40,
+                              child: Center(child: CircularProgressIndicator()),
+                            ),
+                        ],
+                      );
+                    },
                     error: (e, _) => Center(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 40),
@@ -187,7 +207,8 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                             Text(
                               'Connection Issue',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
                                     color: Colors.white70,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -196,17 +217,21 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                             Text(
                               'Please check your internet and try again.',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey,
-                                  ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.grey),
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
-                              onPressed: () => ref.read(homeViewmodelProvider.notifier).refresh(),
+                              onPressed: () => ref
+                                  .read(homeViewmodelProvider.notifier)
+                                  .refresh(),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AColorTheme.gradient1,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),

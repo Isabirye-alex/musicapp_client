@@ -53,18 +53,19 @@ class _HomePageState extends ConsumerState<HomePage> {
     final primary = AColorTheme.gradient1;
 
     return Scaffold(
-      extendBody: true,
+      extendBody: false,
       body: Column(
         children: [
           Expanded(child: pages[selectedIndex]),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: MusicSlab(),
           ),
+          const SizedBox(height: 8),
         ],
       ),
       bottomNavigationBar: Padding(
-        padding:  EdgeInsets.fromLTRB(20, 0, 20, 20),
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
         child: Container(
           height: 70,
           decoration: BoxDecoration(

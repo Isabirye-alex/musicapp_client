@@ -48,7 +48,7 @@ final class RecentlyPlayedViewmodelProvider
 }
 
 String _$recentlyPlayedViewmodelHash() =>
-    r'f19671e9d320aefe5fc9188d38757b3eec599f16';
+    r'9057a3048bf558638135cd58c4ab4606a89600c9';
 
 abstract class _$RecentlyPlayedViewmodel
     extends $Notifier<AsyncValue<List<RemoteSongModel>>> {

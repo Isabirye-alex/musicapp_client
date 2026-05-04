@@ -43,6 +43,10 @@ class User {
   /// User's email address
   String email;
 
+  String userAvatar;
+
+ 
+
   DateTime? joinedAt;
 
   DateTime? updatedAt;
@@ -52,6 +56,7 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.email,
+    required this.userAvatar,
     this.joinedAt,
     this.updatedAt,
   });
@@ -62,6 +67,7 @@ class User {
     firstName: json["first_name"] ?? '',
     lastName: json["last_name"] ?? '',
     email: json["email"] ?? '',
+    userAvatar: json['user_avatar'] ?? '',
     joinedAt: json["created_at"] != null
         ? DateTime.parse(json["created_at"])
         : null,
@@ -70,7 +76,7 @@ class User {
         : null,
   );
 
-  /// Converts User to JSON for API requests
+  // Converts User to JSON for API requests
   Map<String, dynamic> toJson() => {
     "id": id,
     "first_name": firstName,

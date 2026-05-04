@@ -22,6 +22,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
   /// Removes the user from state (when user logs out)
   void removeUser() {
     cacheService.clearAll();
+
     state = null;
   }
 }

@@ -5,13 +5,15 @@ import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:little_music/features/home/viewmodel/recently_played_viewmodel.dart';
+import 'package:little_music/utilis/color_converter.dart';
 import 'package:little_music/utilis/name_helper.dart';
 
-class SongCard extends StatelessWidget {
+class SongCard extends StatefulWidget {
   final RemoteSongModel song;
   final WidgetRef ref;
   final List<RemoteSongModel> playlist;
   final int index;
+
   const SongCard({
     super.key,
     required this.song,
@@ -21,86 +23,198 @@ class SongCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        final currentUser = ref.watch(currentUserProvider)?.user;
+  State<SongCard> createState() => _SongCardState();
+}
 
-        final success = await ref
+class _SongCardState extends State<SongCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 120),
+      lowerBound: 0.0,
+      upperBound: 0.05,
+    );
+    _scaleAnim = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = hexToColor(widget.song.hexCode);
+    final size = MediaQuery.of(context).size;
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) => _controller.reverse(),
+      onTapCancel: () => _controller.reverse(),
+      onTap: () async {
+        final currentUser = widget.ref.read(currentUserProvider)?.user;
+
+        final success = await widget.ref
             .read(currentSongProvider.notifier)
-            .setPlaylist(playlist, startIndex: index);
-     
+            .setPlaylist(widget.playlist, startIndex: widget.index);
+
         if (currentUser != null) {
-      
-          ref
-              .watch(recentlyPlayedViewmodelProvider.notifier)
-              .addToRecentlyPlayed(song.songId);
+          widget.ref
+              .read(recentlyPlayedViewmodelProvider.notifier)
+              .addToRecentlyPlayed(widget.song.songId);
         }
 
         if (!success && context.mounted) {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Row(
+              title: const Row(
                 children: [
                   Icon(Icons.wifi_off, color: Colors.red),
                   SizedBox(width: 8),
                   Text('No Internet'),
                 ],
               ),
-              content: Text(
+              content: const Text(
                 'You need an internet connection to play songs. Please connect and try again.',
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             ),
           );
         }
       },
-      child: Padding(
-        padding: EdgeInsets.only(right: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(song.thumbnail),
-                  fit: BoxFit.cover,
+      child: ScaleTransition(
+        scale: _scaleAnim,
+        child: Padding(
+          padding: EdgeInsets.zero,
+          child: SizedBox(
+            width: 160,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Thumbnail with gradient overlay
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.song.thumbnail,
+                        height: size.height * 0.20,
+                        width: size.width * 0.45,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          height: 160,
+                          width: 160,
+                          color: color.withAlpha(60),
+                          child: const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          height: 160,
+                          width: 160,
+                          color: color.withAlpha(60),
+                          child: Icon(
+                            Icons.music_note_rounded,
+                            color: color,
+                            size: 40,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Bottom gradient for depth
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                        child: Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                color.withAlpha(180),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Hex color dot indicator
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: color.withAlpha(180),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+                const SizedBox(height: 8),
+                // Song name
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Text(
+                    capitalize(widget.song.songName),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.2,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                // Artist name
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Text(
+                    widget.song.artistName,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.grey,
+                      letterSpacing: 0.1,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 5),
-            SizedBox(
-              width: 180,
-              child: Text(
-                ' ${capitalize(song.songName)}',
-                style: TextTheme.of(
-                  context,
-                ).bodyMedium!.copyWith(fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-            const SizedBox(height: 3),
-            SizedBox(
-              width: 180,
-              child: Text(
-                song.artistName,
-                style: TextTheme.of(context).bodySmall!.copyWith(),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

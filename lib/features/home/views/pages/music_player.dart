@@ -19,12 +19,8 @@ class MusicPlayer extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          colors: [
-            hexToColor(currentSong!.hexCode),
-            const Color(0xff121212),
-            const Color(0xff009999),
-          ],
+          begin: Alignment.bottomLeft,
+          colors: [hexToColor(currentSong!.hexCode), const Color(0xff121212)],
         ),
       ),
       child: Scaffold(

@@ -10,7 +10,7 @@ import 'package:little_music/features/home/views/widgets/profile_view_mode.dart'
 import 'package:little_music/utilis/loader.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({super.key});
+  ProfilePage({super.key});
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
@@ -63,7 +63,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             // isEditMode = false only set here, after success.
             setState(() => isEditMode = false);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Profile updated successfully!")),
+              SnackBar(content: Text("Profile updated successfully!")),
             );
           }
         },
@@ -77,15 +77,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     });
 
     if (currentUser == null) {
-      return const LoginPrompt();
+      return LoginPrompt();
     }
 
     return Scaffold(
       appBar: _buildAppBar(currentUser),
       body: isLoading
-          ? const Loader()
-          : Padding(
-              padding: const EdgeInsets.all(20),
+          ? Loader()
+          : SingleChildScrollView(
+              padding: EdgeInsets.all(20),
               child: isEditMode
                   ? ProfileEditMode(
                       formKey: formKey,
@@ -107,12 +107,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       actions: [
         if (!isEditMode)
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: Icon(Icons.edit),
             onPressed: () => setState(() => isEditMode = true),
           )
         else
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close),
             onPressed: () => setState(() => isEditMode = false),
           ),
       ],
@@ -137,7 +137,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     ref.read(authLocalRepositoryProvider).clearToken();
     ref.read(currentUserProvider.notifier).removeUser();
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const HomePage()),
+      MaterialPageRoute(builder: (_) => HomePage()),
       (_) => false,
     );
   }

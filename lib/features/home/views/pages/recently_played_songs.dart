@@ -10,8 +10,10 @@ class RecentlyPlayedSongs extends ConsumerStatefulWidget {
   const RecentlyPlayedSongs({super.key});
 
   @override
-  ConsumerState<RecentlyPlayedSongs> createState() => _RecentlyPlayedSongsState();
+  ConsumerState<RecentlyPlayedSongs> createState() =>
+      _RecentlyPlayedSongsState();
 }
+
 class _RecentlyPlayedSongsState extends ConsumerState<RecentlyPlayedSongs> {
   final ScrollController _scrollController = ScrollController();
 
@@ -22,16 +24,16 @@ class _RecentlyPlayedSongsState extends ConsumerState<RecentlyPlayedSongs> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(recentlyPlayedViewmodelProvider.notifier).fetchNextPage();
     });
-    
+
     // Add scroll listener for pagination
     _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
     final viewModel = ref.read(recentlyPlayedViewmodelProvider.notifier);
-    
+
     // Load more when near the bottom (200 pixels before end)
-    if (_scrollController.position.pixels >= 
+    if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       if (viewModel.hasMore && !viewModel.isLoadingMore) {
         viewModel.fetchNextPage();
@@ -48,8 +50,7 @@ class _RecentlyPlayedSongsState extends ConsumerState<RecentlyPlayedSongs> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(recentlyPlayedViewmodelProvider);
-    final viewModel = ref.read(recentlyPlayedViewmodelProvider.notifier);
-    
+
     return Scaffold(
       appBar: CustomAppBar(),
       body: state.when(
@@ -59,11 +60,11 @@ class _RecentlyPlayedSongsState extends ConsumerState<RecentlyPlayedSongs> {
           if (songs.isEmpty) {
             return const EmptyStateListen();
           }
-          
+
           return ListView.separated(
             controller: _scrollController,
             padding: const EdgeInsets.all(12),
-            itemCount: songs.length + (viewModel.hasMore ? 1 : 0),
+            itemCount: songs.length,
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
               // Show loading indicator at the bottom
@@ -73,7 +74,7 @@ class _RecentlyPlayedSongsState extends ConsumerState<RecentlyPlayedSongs> {
                   child: Center(child: CircularProgressIndicator()),
                 );
               }
-              
+
               final song = songs[index];
               return ListTile(
                 contentPadding: const EdgeInsets.symmetric(
