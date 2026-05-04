@@ -55,10 +55,10 @@ class HomeRemoteRepository {
   }
 
   Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllUserSongs(
-    String token,
+    String token, int limit, int offset
   ) async {
     try {
-      final url = '${ServerConstants.serverUrl}/api/v1/songs/list';
+      final url = '${ServerConstants.serverUrl}/api/v1/songs/list?limit=$limit&offset=$offset';
 
       final response = await http.get(
         Uri.parse(url),

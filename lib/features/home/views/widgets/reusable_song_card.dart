@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
@@ -15,26 +16,48 @@ class SongCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        ref.read(currentSongProvider.notifier).setPlaylist(
-          playlist,
-          startIndex: index, //start from tapped song
-        );
-        ref.watch(homeLocalRepositoryProvider).uploadLocalSongs(song);
+      onTap: () async {
+        final success = await ref
+            .read(currentSongProvider.notifier)
+            .setPlaylist(playlist, startIndex: index);
+
+        if (!success && context.mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Row(
+                children: [
+                  Icon(Icons.wifi_off, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('No Internet'),
+                ],
+              ),
+              content: Text(
+                'You need an internet connection to play songs. Please connect and try again.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       },
       child: Padding(
-        padding: const EdgeInsets.only(right: 12),
+        padding: EdgeInsets.only(right: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              height: 180,
-              width: 180,
+              height: 200,
+              width: 200,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 image: DecorationImage(
-                  image: NetworkImage(song.thumbnail),
+                  image: CachedNetworkImageProvider(song.thumbnail),
                   fit: BoxFit.cover,
                 ),
               ),

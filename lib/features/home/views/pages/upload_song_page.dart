@@ -7,6 +7,7 @@ import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/features/auth/view/widgets/audio_wave.dart';
 import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
+import 'package:little_music/features/home/viewmodel/user_songs_notifier.dart';
 import 'package:little_music/features/home/views/widgets/login_prompt.dart';
 import 'package:little_music/utilis/custom_text_field.dart';
 import 'package:little_music/utilis/error.dart';
@@ -31,20 +32,47 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
 
   void selectImage() async {
     final image = await pickImage();
-    if (image != null) {
-      setState(() {
-        selectedImage = image;
-      });
+    if (image == null){
+      return;
     }
+    // validate it's an image
+    final ext = image.path.split('.').last.toLowerCase();
+    if (!['jpg', 'jpeg', 'png', 'webp'].contains(ext)) {
+      if (mounted) {
+        ErrorHelper.showError(
+          context,
+          'Please select a valid image file (jpg, png, webp)',
+          'Invalid File',
+        );
+      }
+      return;
+    }
+    setState(() {
+      selectedImage = image;
+    });
   }
 
   void selectAudio() async {
     final audio = await pickAudio(); //
-    if (audio != null) {
-      setState(() {
-        selectedAudio = audio;
-      });
+    if (audio == null){
+      return;
     }
+    // validate it's an audio file
+    final ext = audio.path.split('.').last.toLowerCase();
+    if (!['mp3', 'wav', 'aac', 'm4a', 'flac', 'ogg'].contains(ext)) {
+      if (mounted) {
+        ErrorHelper.showError(
+          context,
+          'Please select a valid audio file (mp3, wav, aac)',
+          'Invalid File',
+        );
+      }
+      return;
+    }
+    setState(() {
+      selectedAudio = audio;
+    });
+
   }
 
   @override
@@ -70,7 +98,7 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
             'Song uploaded successfully',
             'Success',
           );
-          ref.invalidate(getAllSongsProvider);
+          ref.invalidate(userSongsProvider);
         },
         error: (error, str) {
           ErrorHelper.showError(context, '$error', error.toString());
@@ -79,7 +107,6 @@ class _UploadSongPageState extends ConsumerState<UploadSongPage> {
       );
     });
 
-    //if user is not logged in — prompt to login
     if (currentUser == null) {
       return Scaffold(body: LoginPrompt());
     }

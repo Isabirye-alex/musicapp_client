@@ -8,18 +8,12 @@ part of 'auth_viewmodel.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Riverpod notifier for authentication state management
-/// Handles signup, signin, and session persistence
 
 @ProviderFor(AuthViewmodel)
 const authViewmodelProvider = AuthViewmodelProvider._();
 
-/// Riverpod notifier for authentication state management
-/// Handles signup, signin, and session persistence
 final class AuthViewmodelProvider
     extends $NotifierProvider<AuthViewmodel, AsyncValue<UserModel?>?> {
-  /// Riverpod notifier for authentication state management
-  /// Handles signup, signin, and session persistence
   const AuthViewmodelProvider._()
     : super(
         from: null,
@@ -47,10 +41,7 @@ final class AuthViewmodelProvider
   }
 }
 
-String _$authViewmodelHash() => r'45e559b80f2b306d241533a93605460f9737c729';
-
-/// Riverpod notifier for authentication state management
-/// Handles signup, signin, and session persistence
+String _$authViewmodelHash() => r'569dcfc9eacc7f14d984ff7b1a3ba2d15a53c2eb';
 
 abstract class _$AuthViewmodel extends $Notifier<AsyncValue<UserModel?>?> {
   AsyncValue<UserModel?>? build();

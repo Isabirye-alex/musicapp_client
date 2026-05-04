@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
@@ -31,11 +32,15 @@ class RecentlyPlayedSongs extends ConsumerWidget {
                   ),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      song.thumbnail,
+                    child: Container(
                       width: 60,
                       height: 60,
-                      fit: BoxFit.cover,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: CachedNetworkImageProvider(song.thumbnail),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                   title: Text(
@@ -49,10 +54,37 @@ class RecentlyPlayedSongs extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   trailing: GestureDetector(
-                    onTap: () => ref
-                        .read(currentSongProvider.notifier)
-                        .setPlaylist(recentlyPlayedSongs, startIndex: index),
+                    onTap: () async {
+                      final success = await ref
+                          .read(currentSongProvider.notifier)
+                          .setPlaylist(recentlyPlayedSongs, startIndex: index);
+
+                      if (!success && context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Row(
+                              children: [
+                                Icon(Icons.wifi_off, color: Colors.red),
+                                SizedBox(width: 8),
+                                Text('No Internet'),
+                              ],
+                            ),
+                            content: Text(
+                              'You need an internet connection to play songs. Please connect and try again.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    },
                     child: Icon(Icons.play_arrow, color: Colors.blueAccent),
+
                   ),
                 );
               },

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'home_viewmodel.dart';
+part of 'user_songs_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,29 +9,32 @@ part of 'home_viewmodel.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(HomeViewmodel)
-const homeViewmodelProvider = HomeViewmodelProvider._();
+@ProviderFor(UserSongsNotifier)
+const userSongsProvider = UserSongsNotifierProvider._();
 
-final class HomeViewmodelProvider
+final class UserSongsNotifierProvider
     extends
-        $NotifierProvider<HomeViewmodel, AsyncValue<List<RemoteSongModel>>> {
-  const HomeViewmodelProvider._()
+        $NotifierProvider<
+          UserSongsNotifier,
+          AsyncValue<List<RemoteSongModel>>
+        > {
+  const UserSongsNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'homeViewmodelProvider',
+        name: r'userSongsProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$homeViewmodelHash();
+  String debugGetCreateSourceHash() => _$userSongsNotifierHash();
 
   @$internal
   @override
-  HomeViewmodel create() => HomeViewmodel();
+  UserSongsNotifier create() => UserSongsNotifier();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AsyncValue<List<RemoteSongModel>> value) {
@@ -44,9 +47,9 @@ final class HomeViewmodelProvider
   }
 }
 
-String _$homeViewmodelHash() => r'fa7d000504f4c585b706567fc1945c5a5ee9fde4';
+String _$userSongsNotifierHash() => r'a5ccecce18f043e1580d05a6472783b42e3e5624';
 
-abstract class _$HomeViewmodel
+abstract class _$UserSongsNotifier
     extends $Notifier<AsyncValue<List<RemoteSongModel>>> {
   AsyncValue<List<RemoteSongModel>> build();
   @$mustCallSuper

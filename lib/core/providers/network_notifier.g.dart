@@ -41,7 +41,7 @@ final class NetworkNotifierProvider
   }
 }
 
-String _$networkNotifierHash() => r'53c928214d0fb0826c5c676c37b3fa3c119140cf';
+String _$networkNotifierHash() => r'193409015e5c0d620980001fb93080c93c00563c';
 
 abstract class _$NetworkNotifier extends $Notifier<bool> {
   bool build();

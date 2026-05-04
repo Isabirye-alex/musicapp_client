@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:little_music/core/cache/cache_service.dart';
 import 'package:little_music/core/theme/a_app_theme.dart';
 import 'package:little_music/core/widgets/network_wrapper.dart';
 import 'package:little_music/features/auth/viewModel/auth_viewmodel.dart';
@@ -39,6 +40,8 @@ void main() async {
   final dir = await getApplicationDocumentsDirectory();
   Hive.init(dir.path);
   await Hive.openBox('songs_box');
+
+  await CacheService.init();
 
   final container = ProviderContainer();
   final userNotifier = container.read(authViewmodelProvider.notifier);

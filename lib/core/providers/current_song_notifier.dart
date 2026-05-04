@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:just_audio/just_audio.dart';
+
+import 'network_notifier.dart';
 part 'current_song_notifier.g.dart';
 
 @riverpod
@@ -25,35 +28,93 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
   List<RemoteSongModel> _songs = [];
   int _currentIndex = -1;
 
-  void setPlaylist(List<RemoteSongModel> songs, {int startIndex = 0}) async {
+  // Future<bool> setPlaylist(List<RemoteSongModel> songs, {int startIndex = 0}) async {
+  //   final isConnected = ref.read(networkProvider);
+  //
+  //   if (!isConnected) {
+  //     return false; //  show the dialog
+  //   }
+  //   _songs = songs;
+  //   _currentIndex = startIndex;
+  //
+  //   // build full playlist as ConcatenatingAudioSource
+  //   _playlist = ConcatenatingAudioSource(
+  //     children: songs
+  //         .map(
+  //           (song) => AudioSource.uri(
+  //             Uri.parse(song.audioPath),
+  //             tag: MediaItem(
+  //               id: song.id,
+  //               title: song.displayTitle,
+  //               artist: song.displayArtist,
+  //               artUri: Uri.parse(song.thumbnailUrl),
+  //             ),
+  //           ),
+  //         )
+  //         .toList(),
+  //   );
+  //
+  //   await audioPlayer!.setAudioSource(
+  //     _playlist!,
+  //     initialIndex: startIndex,
+  //   );
+  //   audioPlayer!.play();
+  //
+  //   state = songs[startIndex];
+  //   // listen to index changes to update current song state
+  //   _playerStateSubscription?.cancel();
+  //   _playerStateSubscription = audioPlayer!.currentIndexStream.listen((index) {
+  //     if (index != null && index != _currentIndex) {
+  //       _currentIndex = index;
+  //       state = _songs[index];
+  //     }
+  //   });
+  //   // handle song completion to auto-advance or stop at end of playlist
+  //   audioPlayer!.playerStateStream.listen((playerState) {
+  //     if (playerState.processingState == ProcessingState.completed) {
+  //
+  //       audioPlayer?.seekToNext();
+  //     }
+  //   });
+  //   return true;
+  // }
+
+  Future<bool> setPlaylist(List<RemoteSongModel> songs, {int startIndex = 0}) async {
+    final isConnected = ref.read(networkProvider);
+
+    if (!isConnected) return false;
+
     _songs = songs;
     _currentIndex = startIndex;
 
-    // build full playlist as ConcatenatingAudioSource
     _playlist = ConcatenatingAudioSource(
       children: songs
           .map(
             (song) => AudioSource.uri(
-              Uri.parse(song.audioPath),
-              tag: MediaItem(
-                id: song.id,
-                title: song.displayTitle,
-                artist: song.displayArtist,
-                artUri: Uri.parse(song.thumbnailUrl),
-              ),
-            ),
-          )
+          Uri.parse(song.audioPath),
+          tag: MediaItem(
+            id: song.id,
+            title: song.displayTitle,
+            artist: song.displayArtist,
+            artUri: Uri.parse(song.thumbnailUrl),
+          ),
+        ),
+      )
           .toList(),
     );
 
-    await audioPlayer!.setAudioSource(
-      _playlist!,
-      initialIndex: startIndex, // start from tapped song
-    );
-    audioPlayer!.play();
+    try {
+      await audioPlayer!.setAudioSource(
+        _playlist!,
+        initialIndex: startIndex,
+      );
+      audioPlayer!.play();
+    } catch (e) {
+      return false; // ← catches ExoPlayer SocketException
+    }
 
     state = songs[startIndex];
-    // listen to index changes to update current song state
+
     _playerStateSubscription?.cancel();
     _playerStateSubscription = audioPlayer!.currentIndexStream.listen((index) {
       if (index != null && index != _currentIndex) {
@@ -61,14 +122,14 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
         state = _songs[index];
       }
     });
-    // handle song completion to auto-advance or stop at end of playlist
+
     audioPlayer!.playerStateStream.listen((playerState) {
       if (playerState.processingState == ProcessingState.completed) {
-        // audioPlayer?.seek(Duration.zero, index: 0);
-        // audioPlayer?.pause();
         audioPlayer?.seekToNext();
       }
     });
+
+    return true;
   }
 
   void nextSong() {
