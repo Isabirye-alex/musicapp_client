@@ -2,24 +2,40 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
+import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
-import 'package:little_music/features/home/repositories/home_local_repository.dart';
+import 'package:little_music/features/home/viewmodel/recently_played_viewmodel.dart';
 import 'package:little_music/utilis/name_helper.dart';
 
 class SongCard extends StatelessWidget {
   final RemoteSongModel song;
   final WidgetRef ref;
-   final List<RemoteSongModel> playlist;
-   final int index; 
-  const SongCard({super.key, required this.song, required this.ref, required this.playlist, required this.index});
+  final List<RemoteSongModel> playlist;
+  final int index;
+  const SongCard({
+    super.key,
+    required this.song,
+    required this.ref,
+    required this.playlist,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        final currentUser = ref.watch(currentUserProvider)?.user;
+
         final success = await ref
             .read(currentSongProvider.notifier)
             .setPlaylist(playlist, startIndex: index);
+     
+        if (currentUser != null) {
+      
+          ref
+              .watch(recentlyPlayedViewmodelProvider.notifier)
+              .addToRecentlyPlayed(song.songId);
+        }
 
         if (!success && context.mounted) {
           showDialog(

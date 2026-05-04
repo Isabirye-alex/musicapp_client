@@ -60,7 +60,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       next?.when(
         data: (user) {
           if (user != null) {
-            // ✅ FIX 3: isEditMode = false only set here, after success.
+            // isEditMode = false only set here, after success.
             setState(() => isEditMode = false);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Profile updated successfully!")),

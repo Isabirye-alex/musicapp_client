@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/utilis/error.dart';
 import 'package:little_music/utilis/loader.dart';

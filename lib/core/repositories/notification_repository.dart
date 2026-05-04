@@ -45,7 +45,6 @@ class NotificationRepository  {
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
-        print('========================Sucess===================');
         return Right(decoded["message_id"]);
       } else {
         return Left(

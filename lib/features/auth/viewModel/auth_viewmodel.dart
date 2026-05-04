@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:little_music/core/cache/cache_service.dart';
@@ -42,26 +41,30 @@ class AuthViewmodel extends _$AuthViewmodel {
       email,
       password,
     );
-    final val = switch (res) {
-      Right(value: final r) => state = AsyncValue.data(null),
-      Left(value: final l) => state = AsyncValue.error(
+    switch (res) {
+      case Right():
+        state = AsyncValue.data(null);
+      case Left(value: final l):
+        state = AsyncValue.error(
         l.message,
         StackTrace.current,
-      ),
-    };
+      );
+    }
     return null;
   }
 
   Future<void> signIn(String email, String password) async {
     state = AsyncValue.loading();
     final res = await _authRemoteRepository.signIn(email, password);
-    final val = switch (res) {
-      Right(value: final r) => state = _logInSuccess(r),
-      Left(value: final l) => state = AsyncValue.error(
+     switch (res) {
+      case Right(value: final r) :
+         state = _logInSuccess(r);
+      case Left(value: final l) :
+         state = AsyncValue.error(
         l.message,
         StackTrace.current,
-      ),
-    };
+      );
+    }
   }
 
   Future<UserModel?> getData() async {
@@ -72,7 +75,7 @@ class AuthViewmodel extends _$AuthViewmodel {
 
     // ── Offline: serve cached user ──
     if (!isConnected) {
-      final cached = await _cache.getCachedUser();
+      final cached = _cache.getCachedUser();
       if (cached != null) {
         _currentUserNotifier.addUser(cached);
         state = AsyncValue.data(cached);

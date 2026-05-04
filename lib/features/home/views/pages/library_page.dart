@@ -115,7 +115,7 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
 
                   final isConnected = ref.watch(networkProvider); // ← watch network
                   final hasMore = ref.watch(homeViewmodelProvider.notifier).hasMore;
-                  final isLoading = ref.watch(homeViewmodelProvider).isLoading;
+             
 
                   return Column(
                     children: [
