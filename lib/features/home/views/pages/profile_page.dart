@@ -10,7 +10,7 @@ import 'package:little_music/features/home/views/widgets/profile_view_mode.dart'
 import 'package:little_music/utilis/loader.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  ProfilePage({super.key});
+  const ProfilePage({super.key});
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();

@@ -13,7 +13,6 @@ part 'home_viewmodel.g.dart';
 
 enum SongSortOrder { newest, oldest, name }
 
-
 @Riverpod(keepAlive: true)
 class HomeViewmodel extends _$HomeViewmodel {
   late HomeRemoteRepository _homeRemoteRepository;
@@ -21,11 +20,12 @@ class HomeViewmodel extends _$HomeViewmodel {
   late HomeLocalRepository _homeLocalRepository;
   final _cache = CacheService();
   bool _hasMore = true;
-  // ignore: prefer_final_fields
   SongSortOrder _sortOrder = SongSortOrder.newest;
+  String? _search;                                        // ← track active search
 
   bool get hasMore => _hasMore && ref.read(networkProvider);
   SongSortOrder get sortOrder => _sortOrder;
+  String? get search => _search;
 
   @override
   AsyncValue<List<RemoteSongModel>> build() {
@@ -35,14 +35,13 @@ class HomeViewmodel extends _$HomeViewmodel {
     return const AsyncValue.loading();
   }
 
-  Future<void> fetchNextPage() async {
+  Future<void> fetchNextPage({String? search}) async {
     if (!_hasMore) return;
 
     final isConnected = ref.read(networkProvider);
 
-    //Offline: serve from cache
     if (!isConnected) {
-      final cached =  _cache.getCachedSongs();
+      final cached = _cache.getCachedSongs();
       _hasMore = false;
       state = cached.isNotEmpty
           ? AsyncValue.data(cached)
@@ -50,10 +49,8 @@ class HomeViewmodel extends _$HomeViewmodel {
       return;
     }
 
-    //Online: fetch from API
     final currentSongs = state.value ?? [];
-
-    final nextPage = currentSongs.length ~/ 20;
+    final nextPage = currentSongs.length ~/ 80;        
     final token = _authLocalRepository.getToken();
 
     final res = await _homeRemoteRepository.fetchAllPlatformSongs(
@@ -61,17 +58,17 @@ class HomeViewmodel extends _$HomeViewmodel {
       80,
       nextPage * 80,
       sortOrder: _sortOrder.name,
+      search: search ?? _search, 
     );
 
     switch (res) {
       case Right(value: final newSongs):
-        if (newSongs.length < 20) _hasMore = false;
+        if (newSongs.length < 80) _hasMore = false;       
         final updated = [...currentSongs, ...newSongs];
         state = AsyncValue.data(updated);
-         _cache.cacheSongs(updated); // ← cache after success
+        _cache.cacheSongs(updated);
       case Left(value: final l):
         _hasMore = false;
-        // API failed — try cache before showing error
         final cached = _cache.getCachedSongs();
         state = cached.isNotEmpty
             ? AsyncValue.data(cached)
@@ -79,13 +76,13 @@ class HomeViewmodel extends _$HomeViewmodel {
     }
   }
 
-  Future<void> refresh() async {
+  Future<void> refresh({String? search}) async {
     _hasMore = true;
 
     final isConnected = ref.read(networkProvider);
 
     if (!isConnected) {
-      final cached =  _cache.getCachedSongs();
+      final cached = _cache.getCachedSongs();
       state = cached.isNotEmpty
           ? AsyncValue.data(cached)
           : AsyncValue.error('No internet connection', StackTrace.current);
@@ -95,24 +92,38 @@ class HomeViewmodel extends _$HomeViewmodel {
     final token = _authLocalRepository.getToken();
     final res = await _homeRemoteRepository.fetchAllPlatformSongs(
       token,
-      20,
+      80,
       0,
       sortOrder: _sortOrder.name,
+      search: search ?? _search,
     );
 
     switch (res) {
       case Right(value: final newSongs):
-        if (newSongs.length < 20) _hasMore = false;
+        if (newSongs.length < 80) _hasMore = false;
         state = AsyncValue.data(newSongs);
-         _cache.cacheSongs(newSongs);
+        _cache.cacheSongs(newSongs);
       case Left(value: final l):
-        _hasMore = false; // ← Stop trying to fetch more if API fails
-        final cached =  _cache.getCachedSongs();
+        _hasMore = false;
+        final cached = _cache.getCachedSongs();
         state = cached.isNotEmpty
             ? AsyncValue.data(cached)
             : AsyncValue.error(l.message, StackTrace.current);
     }
   }
+
+  // entry point
+  Future<void> searchSongs(String? query) async {
+    final trimmed = (query ?? '').trim();
+    _search = trimmed.isEmpty ? null : trimmed;       
+    await refresh(search: _search);
+  }
+
+  Future<void> clearSearch() async {
+    _search = null;
+    await refresh();
+  }
+
 
   Future<void> changeSortOrder(SongSortOrder order) async {
     if (_sortOrder == order) return;
@@ -121,12 +132,12 @@ class HomeViewmodel extends _$HomeViewmodel {
   }
 
   Future<void> upload(
-      File song,
-      File thumbnail,
-      String songName,
-      String artistName,
-      String hexCode,
-      ) async {
+    File song,
+    File thumbnail,
+    String songName,
+    String artistName,
+    String hexCode,
+  ) async {
     final token = _authLocalRepository.getToken();
     if (token == null) return;
     state = const AsyncValue.loading();
@@ -157,9 +168,7 @@ class HomeViewmodel extends _$HomeViewmodel {
     final token = _authLocalRepository.getToken();
     if (token == null) return;
 
-    ref
-        .read(currentSongProvider.notifier)
-        .updateFavoriteStatus(!currentSong.isFavorite);
+    ref.read(currentSongProvider.notifier).updateFavoriteStatus(!currentSong.isFavorite);
 
     final res = await _homeRemoteRepository.toggleFavorite(
       currentSong.id,
@@ -168,10 +177,7 @@ class HomeViewmodel extends _$HomeViewmodel {
 
     switch (res) {
       case Left(value: final l):
-      // Revert optimistic update on failure
-        ref
-            .read(currentSongProvider.notifier)
-            .updateFavoriteStatus(currentSong.isFavorite);
+        ref.read(currentSongProvider.notifier).updateFavoriteStatus(currentSong.isFavorite);
         state = AsyncValue.error(l.message, StackTrace.current);
       case Right(value: final isFavorite):
         ref.read(currentSongProvider.notifier).updateFavoriteStatus(isFavorite);

@@ -85,40 +85,49 @@ class HomeRemoteRepository {
   }
 
   Future<Either<AppFailure, List<RemoteSongModel>>> fetchAllPlatformSongs(
-    String? token,
-    int limit,
-    int offset,{
-    String sortOrder = 'newest'
-    }
-  ) async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          '${ServerConstants.serverUrl}/api/v1/songs/platform/all/$limit/$offset?sort=$sortOrder',
-        ),
-        headers: {'Content-Type': 'application/json', 'x-auth-token': ?token},
+  String? token,
+  int limit,
+  int offset, {
+  String sortOrder = 'newest',
+  String? search,                          
+}) async {
+  try {
+    //Build query params 
+    final queryParams = {
+      'sort': sortOrder,
+      if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
+    };
+
+    final uri = Uri.parse(
+      '${ServerConstants.serverUrl}/api/v1/songs/platform/all/$limit/$offset',
+    ).replace(queryParameters: queryParams);
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'x-auth-token': token,   // ← also fixes your ?token bug
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      final List<RemoteSongModel> res = result
+          .map<RemoteSongModel>(
+            (s) => RemoteSongModel.fromJson(s as Map<String, dynamic>),
+          )
+          .toList();
+      return Right(res);
+    } else {
+      final result = jsonDecode(response.body);
+      return Left(
+        AppFailure(message: result['detail'] ?? 'Error fetching songs'),
       );
-      if (response.statusCode == 200) {
-        final result = jsonDecode(response.body);
-        final List<RemoteSongModel> res = result
-            .map<RemoteSongModel>(
-              (s) => RemoteSongModel.fromJson(s as Map<String, dynamic>),
-            )
-            .toList();
-
-        return Right(res);
-      } else {
-        final result = jsonDecode(response.body);
-
-        return Left(
-          AppFailure(message: result['detail'] ?? 'Error fetching songs'),
-        );
-      }
-    } catch (e) {
-      return Left(AppFailure(message: e.toString()));
     }
+  } catch (e) {
+    return Left(AppFailure(message: e.toString()));
   }
-
+}
  Future<Either<AppFailure, bool>> toggleFavorite(
   String songId,
   String token,
