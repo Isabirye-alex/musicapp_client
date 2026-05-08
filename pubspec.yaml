@@ -38,6 +38,8 @@ dependencies:
   connectivity_plus: ^7.1.1
   iconsax: ^0.0.8
   cached_network_image: ^3.4.1
+  flutter_downloader: ^1.12.0
+  media_scanner: ^2.2.1
 
 dev_dependencies:
   flutter_test:

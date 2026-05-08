@@ -5,6 +5,7 @@ import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/providers/current_user_notifier.dart';
 import 'package:little_music/features/home/models/sealed_model_class.dart';
 import 'package:little_music/features/home/viewmodel/recently_played_viewmodel.dart';
+import 'package:little_music/features/home/views/widgets/download_button.dart';
 import 'package:little_music/utilis/color_converter.dart';
 import 'package:little_music/utilis/name_helper.dart';
 
@@ -181,6 +182,12 @@ class _SongCardState extends State<SongCard>
                           ],
                         ),
                       ),
+                    ),
+
+                    Positioned(
+                      bottom: 8,
+                      right: 8,
+                      child: DownloadButton(song: widget.song),
                     ),
                   ],
                 ),
