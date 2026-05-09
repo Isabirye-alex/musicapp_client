@@ -6,7 +6,6 @@ import 'package:media_scanner/media_scanner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-// ← keep callback dead simple, no plugin calls
 @pragma('vm:entry-point')
 void downloadCallback(String id, int status, int progress) {
   // status 3 = complete

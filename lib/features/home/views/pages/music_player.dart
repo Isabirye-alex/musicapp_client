@@ -97,7 +97,7 @@ class MusicPlayer extends ConsumerWidget {
                       ],
                     ),
 
-                    // ── Seek bar ──
+                    // Seek bar
                     Expanded(
                       child: StreamBuilder(
                         stream: songNotifier.audioPlayer?.positionStream,
@@ -160,41 +160,42 @@ class MusicPlayer extends ConsumerWidget {
                     ),
 
                     // ── Controls ──
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(CupertinoIcons.shuffle, size: 30),
+                          // const Icon(CupertinoIcons.shuffle, size: 30),
 
                           // Previous
                           GestureDetector(
                             onTap: () => songNotifier.previousSong(),
                             child: const Icon(Icons.skip_previous, size: 30),
                           ),
-
+                          SizedBox(width: 30,),
                           // Play/Pause — reads from stream
                           PlayPauseButton(songNotifier: songNotifier),
-
+                          SizedBox(width: 30,),
                           // Next
                           GestureDetector(
                             onTap: () => songNotifier.nextSong(),
                             child: const Icon(Icons.skip_next, size: 30),
                           ),
 
-                          const Icon(CupertinoIcons.loop, size: 30),
+                          // const Icon(CupertinoIcons.loop, size: 30),
                         ],
-                      ),
+                      
                     ),
+                    SizedBox(height: 100,),
+                    Expanded(child: SizedBox())
 
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Icon(CupertinoIcons.dot_radiowaves_left_right),
-                          Icon(CupertinoIcons.list_number_rtl),
-                        ],
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: const [
+                    //       Icon(CupertinoIcons.dot_radiowaves_left_right),
+                    //       Icon(CupertinoIcons.list_number_rtl),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

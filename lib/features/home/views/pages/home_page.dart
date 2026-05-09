@@ -1,5 +1,4 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
@@ -8,7 +7,7 @@ import 'package:little_music/features/home/views/pages/library_page.dart';
 import 'package:little_music/features/home/views/pages/music_slab.dart';
 import 'package:little_music/features/home/views/pages/profile_page.dart';
 import 'package:little_music/features/home/views/pages/recently_played_songs.dart';
-import 'package:little_music/features/home/views/pages/your_uploads.dart';
+
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -22,7 +21,6 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   final List<_NavItem> _navItems = const [
     _NavItem(icon: Icons.home_rounded, label: 'Library'),
-    _NavItem(icon: CupertinoIcons.upload_circle_fill, label: 'Uploads'),
     _NavItem(icon: Icons.history_rounded, label: 'Recent'),
     _NavItem(icon: Icons.account_circle_rounded, label: 'Profile'),
   ];
@@ -45,7 +43,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       LibraryPage(),
-      YourUploads(),
       RecentlyPlayedSongs(),
       ProfilePage(),
     ];

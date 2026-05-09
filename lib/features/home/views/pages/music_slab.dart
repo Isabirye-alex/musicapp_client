@@ -87,7 +87,7 @@ class MusicSlab extends ConsumerWidget {
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.bodyMedium!
                                   .copyWith(
-                                    color: AColorTheme.gradient1,
+                                    color: AColorTheme.whiteColor,
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),

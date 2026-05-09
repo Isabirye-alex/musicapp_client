@@ -10,8 +10,8 @@ import 'package:little_music/core/theme/a_text_theme.dart';
 import 'package:little_music/core/theme/input_decoration.dart';
 import 'package:little_music/core/theme/navigation_bar_theme.dart';
 
-/// Main theme configuration class
-/// Provides light and dark theme data using Material 3
+///Main theme configuration class
+// Provides light and dark theme data using Material 3
 class AAppTheme {
   AAppTheme._(); // Private constructor to prevent instantiation
 
@@ -30,9 +30,10 @@ class AAppTheme {
     inputDecorationTheme: LInputDecoration.lightTheme,
     elevatedButtonTheme: AElevatedButton.lightTheme,
     bottomSheetTheme: BottomSheetThemeData(),
+
   );
 
-  /// Dark theme configuration
+  // Dark theme configuration
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
@@ -46,5 +47,6 @@ class AAppTheme {
     inputDecorationTheme: LInputDecoration.darkTheme,
     elevatedButtonTheme: AElevatedButton.darkTheme,
     bottomNavigationBarTheme: ABottomNavBar.darkTheme,
+
   );
 }

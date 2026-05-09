@@ -33,6 +33,7 @@ class ProfileEditMode extends ConsumerWidget {
         : Form(
             key: formKey,
             child: ListView(
+              shrinkWrap: true,
               children: [
                 CustomTextField(
                   controller: firstNameController,

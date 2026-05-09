@@ -112,10 +112,10 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // ── CustomAppBar ──────────────────────────────────────────
+                    // CustomAppBar
                     const CustomAppBar(),
                     const SizedBox(height: 8),
-                    // ── Search + Sort on same row ─────────────────────────────
+                    //Search + Sort on same row
                     Row(
                       children: [
                         // Search field takes remaining space
@@ -129,7 +129,7 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               hintText:
-                                  'Search...', // ← shorter hint, less cramped
+                                  'Search...',
                               hintStyle: TextStyle(color: Colors.grey.shade500),
                               prefixIcon: const Icon(
                                 Icons.search,
@@ -191,7 +191,7 @@ class LibraryPageState extends ConsumerState<LibraryPage> {
                 child: Text(
                   _isSearching && _searchController.text.trim().isNotEmpty
                       ? 'Results for "${_searchController.text.trim()}"'
-                      : 'Community Songs',
+                      : 'Discover',
                   style: TextTheme.of(context).headlineMedium,
                 ),
               ),
