@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:little_music/core/providers/current_song_notifier.dart';
 import 'package:little_music/core/theme/a_color_theme.dart';
 import 'package:little_music/core/widgets/play_pause_button.dart';
-import 'package:little_music/features/home/viewmodel/home_viewmodel.dart';
 import 'package:little_music/features/home/views/pages/music_player.dart';
 import 'package:little_music/utilis/color_converter.dart';
 
@@ -106,22 +105,7 @@ class MusicSlab extends ConsumerWidget {
                 ),
                 Row(
                   children: [
-                    IconButton(
-                      onPressed: () async {
-                        await ref
-                            .read(homeViewmodelProvider.notifier)
-                            .toggleFavorite();
-                      },
-                      icon: currentSong.favoriteStatus == true
-                          ? const Icon(
-                              CupertinoIcons.heart_fill,
-                              color: AColorTheme.accent,
-                            )
-                          : const Icon(
-                              CupertinoIcons.heart,
-                              color: AColorTheme.gradient1,
-                            ),
-                    ),
+
                     Row(
                       children: [
                         GestureDetector(

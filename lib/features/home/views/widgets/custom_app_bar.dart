@@ -83,52 +83,6 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
                   const Spacer(),
 
-                  // Notification bell
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? AColorTheme.whiteColor.withAlpha(30)
-                                  : AColorTheme.backgroundColor.withAlpha(30),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AColorTheme.whiteColor.withAlpha(50),
-                                width: 0.8,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.notifications_outlined,
-                              color: isDark
-                                  ? AColorTheme.whiteColor
-                                  : AColorTheme.backgroundColor,
-                              size: 22,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: AColorTheme.accent.withAlpha(250),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(width: 10),
-
                   // Avatar
                   ClipRRect(
                     borderRadius: BorderRadius.circular(22),

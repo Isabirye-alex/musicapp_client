@@ -6,15 +6,13 @@ import 'package:little_music/features/home/viewmodel/recently_played_viewmodel.d
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'network_notifier.dart';
-
-
 part 'current_song_notifier.g.dart';
 
 @riverpod
 class CurrentSongNotifier extends _$CurrentSongNotifier {
   StreamSubscription? _playerStateSubscription;
   AudioPlayer? audioPlayer;
-  ConcatenatingAudioSource? _playlist; 
+  ConcatenatingAudioSource? _playlist;
 
   @override
   SongsModel? build() {
@@ -29,9 +27,14 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
   List<RemoteSongModel> _songs = [];
   int _currentIndex = -1;
 
-  Future<bool> setPlaylist(List<RemoteSongModel> songs, {int startIndex = 0}) async {
-    final isConnected = ref.read(networkProvider);
+  // Expose songs list so the queue sheet can read it
+  List<RemoteSongModel> get songs => _songs;
 
+  Future<bool> setPlaylist(
+      List<RemoteSongModel> songs, {
+        int startIndex = 0,
+      }) async {
+    final isConnected = ref.read(networkProvider);
     if (!isConnected) return false;
 
     _songs = songs;
@@ -54,18 +57,13 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
     );
 
     try {
-      await audioPlayer!.setAudioSource(
-        _playlist!,
-        initialIndex: startIndex,
-      );
+      await audioPlayer!.setAudioSource(_playlist!, initialIndex: startIndex);
       audioPlayer!.play();
     } catch (e) {
       return false;
     }
 
     state = songs[startIndex];
-    
-    //Record the first song when playlist starts
     await _addToRecentlyPlayed(songs[startIndex]);
 
     _playerStateSubscription?.cancel();
@@ -73,7 +71,6 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
       if (index != null && index != _currentIndex) {
         _currentIndex = index;
         state = _songs[index];
-        // Record next song
         _addToRecentlyPlayed(_songs[index]);
       }
     });
@@ -88,25 +85,17 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
   }
 
   Future<void> _addToRecentlyPlayed(RemoteSongModel song) async {
-    // Get current user (you need to import your user provider)
-    // If you don't have a user provider, let me know and I'll help
     final currentUser = ref.read(currentUserProvider)?.user;
-    
-    // Only add if user is logged in
     if (currentUser != null) {
-      // Don't await - let it run in background so it doesn't slow down playback
-      ref.read(recentlyPlayedViewmodelProvider.notifier)
+      ref
+          .read(recentlyPlayedViewmodelProvider.notifier)
           .addToRecentlyPlayed(song.id);
     }
   }
 
-  void nextSong() {
-    audioPlayer?.seekToNext();
-  }
+  void nextSong() => audioPlayer?.seekToNext();
 
-  void previousSong() {
-    audioPlayer?.seekToPrevious();
-  }
+  void previousSong() => audioPlayer?.seekToPrevious();
 
   void playAndPause() {
     if (audioPlayer?.playing == true) {
@@ -130,5 +119,24 @@ class CurrentSongNotifier extends _$CurrentSongNotifier {
     if (current is RemoteSongModel) {
       state = current.copyWith(isFavorite: isFavorite);
     }
+  }
+  //Repeat
+  Future<void> toggleRepeat() async {
+    final current = audioPlayer?.loopMode ?? LoopMode.off;
+    final next = current == LoopMode.off ? LoopMode.one : LoopMode.off;
+    await audioPlayer?.setLoopMode(next);
+  }
+  //  Shuffle
+  Future<void> toggleShuffle() async {
+    final current = audioPlayer?.shuffleModeEnabled ?? false;
+    await audioPlayer?.setShuffleModeEnabled(!current);
+
+    if (!current) await audioPlayer?.shuffle();
+  }
+  Future<void> playSpecific(RemoteSongModel song) async {
+    final index = _songs.indexWhere((s) => s.id == song.id);
+    if (index == -1) return;
+    await audioPlayer?.seek(Duration.zero, index: index);
+    audioPlayer?.play();
   }
 }
